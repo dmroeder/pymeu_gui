@@ -36,8 +36,6 @@ class Window(tk.Frame):
         self.upload_entry = ttk.Entry(self.frame2, textvariable=self.upload_path)
         self.upload_button = ttk.Button(self.frame2, text="Upload All", command=self.upload_all)
 
-        self.meu = MEUtility(self.ip_address.get())
-
         self.init_window()
 
     def init_window(self):
