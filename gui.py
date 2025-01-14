@@ -24,7 +24,6 @@ class Window(tk.Frame):
         self.upload_path = tk.StringVar()
         self.upload_path.set(current_path)
 
-
         self.frame1 = ttk.LabelFrame(self.main, text="Settings")
         self.ip_label = ttk.Label(self.frame1, text="HMI IP Address:")
         self.ip_entry = ttk.Entry(self.frame1, textvariable=self.ip_address)
@@ -32,7 +31,6 @@ class Window(tk.Frame):
                                             variable=self.overwrite_var,
                                             onvalue=1, offvalue=0)
         
-
         self.frame2 = ttk.LabelFrame(self.main, text="Upload")
         self.upload_lbl = ttk.Label(self.frame2, text="Upload path:")
         self.upload_entry = ttk.Entry(self.frame2, textvariable=self.upload_path)
@@ -41,7 +39,6 @@ class Window(tk.Frame):
         self.meu = MEUtility(self.ip_address.get())
 
         self.init_window()
-
 
     def init_window(self):
         """ Place all GUI items
@@ -61,6 +58,8 @@ class Window(tk.Frame):
         self.upload_button.grid(row=1, column=0, padx=5, pady=5)
 
     def upload_all(self):
+        """ Upload all applications from the terminal
+        """
         ip_address = self.ip_address.get()
         upload_path = self.upload_path.get()
         overwrite = self.overwrite_var.get()
@@ -70,7 +69,6 @@ class Window(tk.Frame):
             messagebox.showinfo("Information", "Upload complete")
         except Exception as e:
             messagebox.showerror("Error", "Something went wrong, {}".format(e))
-
 
 
 if __name__ == "__main__":
