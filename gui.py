@@ -27,14 +27,15 @@ class Window(tk.Frame):
         self.frame1 = ttk.LabelFrame(self.main, text="Settings")
         self.ip_label = ttk.Label(self.frame1, text="HMI IP Address:")
         self.ip_entry = ttk.Entry(self.frame1, textvariable=self.ip_address)
-        self.overwrite_cb = ttk.Checkbutton(self.frame1, text="Overwrite existing files on upload?",
-                                            variable=self.overwrite_var,
-                                            onvalue=1, offvalue=0)
         
         self.frame2 = ttk.LabelFrame(self.main, text="Upload")
         self.upload_lbl = ttk.Label(self.frame2, text="Upload path:")
         self.upload_entry = ttk.Entry(self.frame2, textvariable=self.upload_path)
         self.upload_button = ttk.Button(self.frame2, text="Upload All", command=self.upload_all)
+
+        self.overwrite_cb = ttk.Checkbutton(self.frame2, text="Overwrite existing files on upload?",
+                                            variable=self.overwrite_var,
+                                            onvalue=1, offvalue=0)
 
         self.init_window()
 
@@ -51,9 +52,10 @@ class Window(tk.Frame):
         self.frame2.pack(padx=5, pady=5, fill=tk.X)
         self.frame2.grid_columnconfigure(0, weight=0)
         self.frame2.grid_columnconfigure(1, weight=1)
-        self.upload_lbl.grid(row=0, column=0, padx=(0, 5), pady=5, sticky=tk.W)
+        self.upload_lbl.grid(row=0, column=0, padx=(0,5), pady=5, sticky=tk.W)
         self.upload_entry.grid(row=0, column=1, padx=5, pady=5, sticky=tk.E+tk.W)
-        self.upload_button.grid(row=1, column=0, padx=5, pady=5)
+        self.overwrite_cb.grid(row=1, column=0, columnspan=2, padx=5, pady=5, sticky=tk.W)
+        self.upload_button.grid(row=2, column=0, padx=5, pady=5)
 
     def upload_all(self):
         """ Upload all applications from the terminal
