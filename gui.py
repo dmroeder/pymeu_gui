@@ -51,7 +51,7 @@ class Window(tk.Frame):
         self.frame1.grid_columnconfigure(1, weight=1)
         self.ip_label.grid(row=0, column=0, padx=(0,5), pady=5, sticky=tk.W)
         self.ip_entry.grid(row=0, column=1, padx=5, pady=5, sticky=tk.E+tk.W)
-        self.overwrite_cb.grid(row=1, column=0, padx=5, pady=5)
+        self.overwrite_cb.grid(row=1, column=0, columnspan=2, padx=5, pady=5, sticky=tk.W)
 
         self.frame2.pack(padx=5, pady=5, fill=tk.X)
         self.frame2.grid_columnconfigure(0, weight=0)
