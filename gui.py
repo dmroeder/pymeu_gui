@@ -5,6 +5,17 @@ from pymeu import MEUtility
 from tkinter import messagebox
 from tkinter import ttk
 
+""" TODO:
+Add logging
+List MER files available
+Add upload single
+Add Download
+Add pylogix.Discover() to find PanelView's on network
+Add file dropdowns maybe?
+Add browse to upload directory
+Add open upload directory
+"""
+
 
 class Window(tk.Frame):
 
