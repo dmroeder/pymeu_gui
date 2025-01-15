@@ -9,12 +9,9 @@ from tkinter import ttk
 
 """ TODO:
 Add logging
-List MER files available
 Add upload single
 Add Download
-Add pylogix.Discover() to find PanelView's on network
 Add file dropdowns maybe?
-Add browse to upload directory
 Add open upload directory
 """
 
@@ -43,6 +40,7 @@ class Window(tk.Frame):
         self.frame2 = ttk.LabelFrame(self.main, text="Upload")
         self.upload_lbl = ttk.Label(self.frame2, text="Upload path:")
         self.upload_entry = ttk.Entry(self.frame2, textvariable=self.upload_path_var)
+        self.mer_list = tk.Listbox(self.frame2)
         self.browse_button = ttk.Button(self.frame2, text="...", command=self.browse_upload_directory)
         self.upload_button = ttk.Button(self.frame2, text="Upload All", command=self.upload_all)
 
@@ -52,6 +50,7 @@ class Window(tk.Frame):
 
         self.init_window()
         self._find_panelview_ip()
+        self._get_runtime_files()
 
     def init_window(self):
         """ Place all GUI items
@@ -68,8 +67,9 @@ class Window(tk.Frame):
         self.upload_lbl.grid(row=0, column=0, padx=(0,5), pady=5, sticky=tk.W)
         self.upload_entry.grid(row=0, column=1, padx=5, pady=5, sticky=tk.E+tk.W)
         self.browse_button.grid(row=0, column=2, padx=5, pady=5)
-        self.overwrite_cb.grid(row=1, column=0, columnspan=2, padx=5, pady=5, sticky=tk.W)
-        self.upload_button.grid(row=2, column=0, padx=5, pady=5)
+        self.mer_list.grid(row=1, column=0, columnspan=2, padx=5, pady=5, sticky=tk.W+tk.E)
+        self.overwrite_cb.grid(row=2, column=0, columnspan=2, padx=5, pady=5, sticky=tk.W)
+        self.upload_button.grid(row=3, column=0, padx=5, pady=5)
 
     def _find_panelview_ip(self):
         """ Send list identity and save all HMI IP addresses
@@ -84,6 +84,17 @@ class Window(tk.Frame):
                         hmis.append(device.IPAddress)
         self.ip_list['values'] = hmis
         self.ip_list.current(0)
+
+    def _get_runtime_files(self):
+        """ Get the list of MER files that exist
+        on the PanelView
+        """
+        self.mer_list.delete(0, tk.END)
+        ip_address = self.ip_list.get()
+        meu = MEUtility(ip_address)
+        stuff = meu.get_terminal_info()
+        for f in stuff.device.files:
+            self.mer_list.insert('end', f)
 
     def browse_upload_directory(self):
         """ Select new upload directory
