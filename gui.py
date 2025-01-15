@@ -2,6 +2,7 @@ import os
 import tkinter as tk
 
 from pymeu import MEUtility
+from tkinter import filedialog
 from tkinter import messagebox
 from tkinter import ttk
 
@@ -41,6 +42,7 @@ class Window(tk.Frame):
         self.frame2 = ttk.LabelFrame(self.main, text="Upload")
         self.upload_lbl = ttk.Label(self.frame2, text="Upload path:")
         self.upload_entry = ttk.Entry(self.frame2, textvariable=self.upload_path_var)
+        self.browse_button = ttk.Button(self.frame2, text="...", command=self.browse_upload_directory)
         self.upload_button = ttk.Button(self.frame2, text="Upload All", command=self.upload_all)
 
         self.overwrite_cb = ttk.Checkbutton(self.frame2, text="Overwrite existing files on upload?",
@@ -57,15 +59,20 @@ class Window(tk.Frame):
         self.frame1.grid_columnconfigure(1, weight=1)
         self.ip_label.grid(row=0, column=0, padx=(0,5), pady=5, sticky=tk.W)
         self.ip_entry.grid(row=0, column=1, padx=5, pady=5, sticky=tk.E+tk.W)
-        self.overwrite_cb.grid(row=1, column=0, columnspan=2, padx=5, pady=5, sticky=tk.W)
 
         self.frame2.pack(padx=5, pady=5, fill=tk.X)
         self.frame2.grid_columnconfigure(0, weight=0)
         self.frame2.grid_columnconfigure(1, weight=1)
         self.upload_lbl.grid(row=0, column=0, padx=(0,5), pady=5, sticky=tk.W)
         self.upload_entry.grid(row=0, column=1, padx=5, pady=5, sticky=tk.E+tk.W)
+        self.browse_button.grid(row=0, column=2, padx=5, pady=5)
         self.overwrite_cb.grid(row=1, column=0, columnspan=2, padx=5, pady=5, sticky=tk.W)
         self.upload_button.grid(row=2, column=0, padx=5, pady=5)
+
+    def browse_upload_directory(self):
+        folder_path = filedialog.askdirectory()
+        if folder_path:
+            self.upload_path_var.set(folder_path)
 
     def upload_all(self):
         """ Upload all applications from the terminal
