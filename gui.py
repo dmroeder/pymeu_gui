@@ -37,6 +37,7 @@ class Window(tk.Frame):
         self.frame1 = ttk.LabelFrame(self.main, text="Settings")
         self.ip_label = ttk.Label(self.frame1, text="HMI IP Address:")
         self.ip_list = ttk.Combobox(self.frame1)
+        self.ip_list.bind("<<ComboboxSelected>>", self._get_runtime_files)
 
         self.frame2 = ttk.LabelFrame(self.main, text="Upload")
         self.upload_lbl = ttk.Label(self.frame2, text="Upload path:")
@@ -88,7 +89,7 @@ class Window(tk.Frame):
         self.ip_list['values'] = hmis
         self.ip_list.current(0)
 
-    def _get_runtime_files(self):
+    def _get_runtime_files(self, event=None):
         """ Get the list of MER files that exist
         on the PanelView
         """
