@@ -1,4 +1,5 @@
 import os
+import pylogix
 import tkinter as tk
 
 from pymeu import MEUtility
@@ -37,7 +38,7 @@ class Window(tk.Frame):
 
         self.frame1 = ttk.LabelFrame(self.main, text="Settings")
         self.ip_label = ttk.Label(self.frame1, text="HMI IP Address:")
-        self.ip_entry = ttk.Entry(self.frame1, textvariable=self.ip_address_var)
+        self.ip_list = ttk.Combobox(self.frame1)
 
         self.frame2 = ttk.LabelFrame(self.main, text="Upload")
         self.upload_lbl = ttk.Label(self.frame2, text="Upload path:")
@@ -50,6 +51,7 @@ class Window(tk.Frame):
                                             onvalue=1, offvalue=0)
 
         self.init_window()
+        self._find_panelview_ip()
 
     def init_window(self):
         """ Place all GUI items
@@ -58,7 +60,7 @@ class Window(tk.Frame):
         self.frame1.grid_columnconfigure(0, weight=0)
         self.frame1.grid_columnconfigure(1, weight=1)
         self.ip_label.grid(row=0, column=0, padx=(0,5), pady=5, sticky=tk.W)
-        self.ip_entry.grid(row=0, column=1, padx=5, pady=5, sticky=tk.E+tk.W)
+        self.ip_list.grid(row=0, column=1, padx=5, pady=5, sticky=tk.E+tk.W)
 
         self.frame2.pack(padx=5, pady=5, fill=tk.X)
         self.frame2.grid_columnconfigure(0, weight=0)
@@ -69,7 +71,23 @@ class Window(tk.Frame):
         self.overwrite_cb.grid(row=1, column=0, columnspan=2, padx=5, pady=5, sticky=tk.W)
         self.upload_button.grid(row=2, column=0, padx=5, pady=5)
 
+    def _find_panelview_ip(self):
+        """ Send list identity and save all HMI IP addresses
+        that were discovered on the network to a list
+        """
+        hmis = []
+        with pylogix.PLC() as comm:
+            ret = comm.Discover()
+            if ret.Value:
+                for device in ret.Value:
+                    if device.DeviceID == 24:
+                        hmis.append(device.IPAddress)
+        self.ip_list['values'] = hmis
+        self.ip_list.current(0)
+
     def browse_upload_directory(self):
+        """ Select new upload directory
+        """
         folder_path = filedialog.askdirectory()
         if folder_path:
             self.upload_path_var.set(folder_path)
@@ -77,7 +95,8 @@ class Window(tk.Frame):
     def upload_all(self):
         """ Upload all applications from the terminal
         """
-        ip_address = self.ip_address_var.get()
+        # ip_address = self.ip_address_var.get()
+        ip_address = self.ip_list.get()
         upload_path = self.upload_path_var.get()
         overwrite = self.overwrite_var.get()
         try:
