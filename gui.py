@@ -9,7 +9,6 @@ from tkinter import ttk
 
 """ TODO:
 Add logging
-Add upload single
 Add Download
 Add file dropdowns maybe?
 Add open upload directory
@@ -126,11 +125,9 @@ class Window(tk.Frame):
         else:
             messagebox.showinfo("Information", "No MER was selected")
 
-
     def upload_all(self):
         """ Upload all applications from the terminal
         """
-        # ip_address = self.ip_address_var.get()
         ip_address = self.ip_list.get()
         upload_path = self.upload_path_var.get()
         overwrite = self.overwrite_var.get()
