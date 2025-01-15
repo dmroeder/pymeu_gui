@@ -22,7 +22,8 @@ class Window(tk.Frame):
         tk.Frame.__init__(self, main)
         self.main = main
 
-        current_path = os.path.dirname(__file__) + "\\upload"
+        current_path = os.path.dirname(__file__)
+        current_path = current_path.replace(os.sep, '/')
 
         self.mer_file_var = tk.StringVar()
         self.ip_address_var = tk.StringVar()
