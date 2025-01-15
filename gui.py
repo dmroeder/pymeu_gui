@@ -23,25 +23,24 @@ class Window(tk.Frame):
         tk.Frame.__init__(self, main)
         self.main = main
 
-        self.mer_file = tk.StringVar()
-        self.mer_file.set("")
+        current_path = os.path.dirname(__file__) + "\\upload"
 
-        self.ip_address = tk.StringVar()
-        self.ip_address.set("192.168.1.11")
-
+        self.mer_file_var = tk.StringVar()
+        self.ip_address_var = tk.StringVar()
+        self.upload_path_var = tk.StringVar()
         self.overwrite_var = tk.IntVar()
 
-        current_path = os.path.dirname(__file__) + "\\upload"
-        self.upload_path = tk.StringVar()
-        self.upload_path.set(current_path)
+        self.mer_file_var.set("")
+        self.ip_address_var.set("192.168.1.11")
+        self.upload_path_var.set(current_path)
 
         self.frame1 = ttk.LabelFrame(self.main, text="Settings")
         self.ip_label = ttk.Label(self.frame1, text="HMI IP Address:")
-        self.ip_entry = ttk.Entry(self.frame1, textvariable=self.ip_address)
-        
+        self.ip_entry = ttk.Entry(self.frame1, textvariable=self.ip_address_var)
+
         self.frame2 = ttk.LabelFrame(self.main, text="Upload")
         self.upload_lbl = ttk.Label(self.frame2, text="Upload path:")
-        self.upload_entry = ttk.Entry(self.frame2, textvariable=self.upload_path)
+        self.upload_entry = ttk.Entry(self.frame2, textvariable=self.upload_path_var)
         self.upload_button = ttk.Button(self.frame2, text="Upload All", command=self.upload_all)
 
         self.overwrite_cb = ttk.Checkbutton(self.frame2, text="Overwrite existing files on upload?",
@@ -71,8 +70,8 @@ class Window(tk.Frame):
     def upload_all(self):
         """ Upload all applications from the terminal
         """
-        ip_address = self.ip_address.get()
-        upload_path = self.upload_path.get()
+        ip_address = self.ip_address_var.get()
+        upload_path = self.upload_path_var.get()
         overwrite = self.overwrite_var.get()
         try:
             meu = MEUtility(ip_address)
