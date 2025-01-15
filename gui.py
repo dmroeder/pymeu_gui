@@ -42,7 +42,8 @@ class Window(tk.Frame):
         self.upload_entry = ttk.Entry(self.frame2, textvariable=self.upload_path_var)
         self.mer_list = tk.Listbox(self.frame2)
         self.browse_button = ttk.Button(self.frame2, text="...", command=self.browse_upload_directory)
-        self.upload_button = ttk.Button(self.frame2, text="Upload All", command=self.upload_all)
+        self.upload_button = ttk.Button(self.frame2, text="Upload Selected", command=self.upload)
+        self.upload_all_button = ttk.Button(self.frame2, text="Upload All", command=self.upload_all)
 
         self.overwrite_cb = ttk.Checkbutton(self.frame2, text="Overwrite existing files on upload?",
                                             variable=self.overwrite_var,
@@ -70,6 +71,7 @@ class Window(tk.Frame):
         self.mer_list.grid(row=1, column=0, columnspan=2, padx=5, pady=5, sticky=tk.W+tk.E)
         self.overwrite_cb.grid(row=2, column=0, columnspan=2, padx=5, pady=5, sticky=tk.W)
         self.upload_button.grid(row=3, column=0, padx=5, pady=5)
+        self.upload_all_button.grid(row=3, column=1, padx=5, pady=5)
 
     def _find_panelview_ip(self):
         """ Send list identity and save all HMI IP addresses
@@ -102,6 +104,26 @@ class Window(tk.Frame):
         folder_path = filedialog.askdirectory()
         if folder_path:
             self.upload_path_var.set(folder_path)
+
+    def upload(self):
+        """ Upload all applications from the terminal
+        """
+        indexes = self.mer_list.curselection()
+        if indexes:
+            selected = indexes[0]
+            item = self.mer_list.get(selected)
+            try:
+                ip_address = self.ip_list.get()
+                upload_path = self.upload_path_var.get() + "/" + item
+                overwrite = self.overwrite_var.get()
+                meu = MEUtility(ip_address)
+                stuff = meu.upload(upload_path, overwrite=overwrite)
+                messagebox.showinfo("Information", "Uploading {} complete".format(item))
+            except Exception as e:
+                messagebox.showerror("Error", "Failed to upload {}".format(e))
+        else:
+            messagebox.showinfo("Information", "No MER was selected")
+
 
     def upload_all(self):
         """ Upload all applications from the terminal
