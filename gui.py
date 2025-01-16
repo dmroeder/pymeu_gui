@@ -94,7 +94,7 @@ class Window(tk.Frame):
         self.mer_list.grid(row=1, column=0, columnspan=2, padx=5, pady=5, sticky=tk.W+tk.E)
         self.overwrite_cb.grid(row=2, column=0, columnspan=2, padx=5, pady=5, sticky=tk.W)
         self.upload_button.grid(row=3, column=0, padx=5, pady=5)
-        self.upload_all_button.grid(row=3, column=1, padx=5, pady=5)
+        self.upload_all_button.grid(row=3, column=1, padx=5, pady=5, sticky=tk.W)
 
         # download frame
         self.frame3.pack(padx=5, pady=5, fill=tk.X)
@@ -199,6 +199,7 @@ class Window(tk.Frame):
             stuff = meu.download(mer_path, overwrite=overwrite, delete_logx=delete_logs, replace_comms=replace_comms)
         except Exception as e:
             messagebox.showerror("Error", "Failed to download MER, {}".format(e))
+
 
 if __name__ == "__main__":
     root = tk.Tk()
