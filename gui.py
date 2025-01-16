@@ -104,8 +104,8 @@ class Window(tk.Frame):
         self.download_entry.grid(row=0, column=1, padx=5, pady=5, sticky=tk.W+tk.E)
         self.download_browse_button.grid(row=0, column=2, padx=5, pady=5)
         self.replace_comms_cb.grid(row=1, column=0, columnspan=2, padx=5, pady=5, sticky=tk.W)
-        self.delete_logs_cb.grid(row=1, column=2, padx=5, pady=5, sticky=tk.W)
-        self.download_button.grid(row=2, column=0, padx=5, pady=5)
+        self.delete_logs_cb.grid(row=2, column=0, columnspan=2, padx=5, pady=5, sticky=tk.W)
+        self.download_button.grid(row=3, column=0, padx=5, pady=5)
 
     def _find_panelview_ip(self):
         """ Send list identity and save all HMI IP addresses
@@ -202,7 +202,7 @@ class Window(tk.Frame):
 
 if __name__ == "__main__":
     root = tk.Tk()
-    root.geometry("500x500")
+    root.geometry("600x550")
     root.title("A Better Transfer Utility")
     root.resizable(False, False)
     app = Window(root)
