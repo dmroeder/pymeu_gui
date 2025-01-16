@@ -92,7 +92,7 @@ class Window(tk.Frame):
         self.upload_label.grid(row=0, column=0, padx=(0,5), pady=5, sticky=tk.W)
         self.upload_entry.grid(row=0, column=1, padx=5, pady=5, sticky=tk.E+tk.W)
         self.upload_browse_button.grid(row=0, column=2, padx=5, pady=5)
-        self.mer_list.grid(row=1, column=0, columnspan=2, padx=5, pady=5, sticky=tk.W+tk.E)
+        self.mer_list.grid(row=1, column=0, columnspan=3, padx=5, pady=5, sticky=tk.W+tk.E)
         self.overwrite_cb.grid(row=2, column=0, columnspan=2, padx=5, pady=5, sticky=tk.W)
         self.upload_button.grid(row=3, column=0, padx=5, pady=5)
         self.upload_all_button.grid(row=3, column=1, padx=5, pady=5, sticky=tk.W)
