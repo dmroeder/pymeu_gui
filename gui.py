@@ -32,6 +32,7 @@ class Window(tk.Frame):
         self.overwrite_var = tk.IntVar()
         self.replace_comms_var = tk.IntVar()
         self.delete_logs_var = tk.IntVar()
+        self.run_on_start_var = tk.IntVar()
 
         self.mer_file_var.set("")
         self.ip_address_var.set("192.168.1.11")
@@ -65,9 +66,12 @@ class Window(tk.Frame):
         self.replace_comms_cb = ttk.Checkbutton(self.frame3, text="Replace communications? (hint, you should)",
                                                 variable=self.replace_comms_var,
                                                 onvalue=1, offvalue=0)
-        self.delete_logs_cb = ttk.Checkbutton(self.frame3, text="Delete logx?",
+        self.delete_logs_cb = ttk.Checkbutton(self.frame3, text="Delete logs?",
                                               variable=self.delete_logs_var,
                                               onvalue=1, offval=0)
+        self.run_on_start_cb = ttk.Checkbutton(self.frame3, text="Run at startup?",
+                                               variable=self.run_on_start_var,
+                                               onvalue=1, offvalue=0)
 
         self.init_window()
         self._find_panelview_ip()
@@ -104,8 +108,9 @@ class Window(tk.Frame):
         self.download_entry.grid(row=0, column=1, padx=5, pady=5, sticky=tk.W+tk.E)
         self.download_browse_button.grid(row=0, column=2, padx=5, pady=5)
         self.replace_comms_cb.grid(row=1, column=0, columnspan=2, padx=5, pady=5, sticky=tk.W)
-        self.delete_logs_cb.grid(row=2, column=0, columnspan=2, padx=5, pady=5, sticky=tk.W)
-        self.download_button.grid(row=3, column=0, padx=5, pady=5)
+        self.delete_logs_cb.grid(row=2, column=0, padx=5, pady=5, sticky=tk.W)
+        self.run_on_start_cb.grid(row=2, column=1, columnspan=2, padx=5, pady=6, sticky=tk.W)
+        self.download_button.grid(row=4, column=0, padx=5, pady=5)
 
     def _find_panelview_ip(self):
         """ Send list identity and save all HMI IP addresses
@@ -188,6 +193,7 @@ class Window(tk.Frame):
         overwrite = self.overwrite_var.get()
         replace_comms = self.replace_comms_var.get()
         delete_logs = self.delete_logs_var.get()
+        run_at_start = self.run_on_start_var.get()
         if ip_address == "":
             messagebox.showwarning("Uh-oh", "No IP address was entered")
             return
@@ -196,7 +202,10 @@ class Window(tk.Frame):
             return
         try:
             meu = MEUtility(ip_address)
-            stuff = meu.download(mer_path, overwrite=overwrite, delete_logx=delete_logs, replace_comms=replace_comms)
+            stuff = meu.download(mer_path, overwrite=overwrite,
+                                 delete_logx=delete_logs,
+                                 replace_comms=replace_comms,
+                                 run_at_starupt=run_at_start)
         except Exception as e:
             messagebox.showerror("Error", "Failed to download MER, {}".format(e))
 
@@ -204,7 +213,7 @@ class Window(tk.Frame):
 if __name__ == "__main__":
     root = tk.Tk()
     root.geometry("600x550")
-    root.title("A Better Transfer Utility")
+    root.title("A Better Transfer Utility?")
     root.resizable(False, False)
     app = Window(root)
     root.mainloop()
