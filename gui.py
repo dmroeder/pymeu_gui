@@ -28,11 +28,13 @@ class Window(tk.Frame):
         self.mer_file_var = tk.StringVar()
         self.ip_address_var = tk.StringVar()
         self.upload_path_var = tk.StringVar()
+        self.download_file_var = tk.StringVar()
         self.overwrite_var = tk.IntVar()
 
         self.mer_file_var.set("")
         self.ip_address_var.set("192.168.1.11")
         self.upload_path_var.set(current_path)
+        self.download_file_var.set("")
 
         # settings frame
         self.frame1 = ttk.LabelFrame(self.main, text="Settings")
@@ -42,7 +44,7 @@ class Window(tk.Frame):
 
         # upload frame
         self.frame2 = ttk.LabelFrame(self.main, text="Upload")
-        self.upload_lbl = ttk.Label(self.frame2, text="Upload path:")
+        self.upload_label = ttk.Label(self.frame2, text="Upload path:")
         self.upload_entry = ttk.Entry(self.frame2, textvariable=self.upload_path_var)
         self.mer_list = tk.Listbox(self.frame2)
         self.upload_browse_button = ttk.Button(self.frame2, text="...", command=self.browse_upload_directory)
@@ -54,7 +56,10 @@ class Window(tk.Frame):
                                             onvalue=1, offvalue=0)
 
         # download frame
-        self.frame3 = ttk.LabelFrame(self.main, text="Download")
+        self.frame3 = ttk.LabelFrame(self.main, text="Download MER")
+        self.download_label = ttk.Label(self.frame3, text="File to Download:")
+        self.download_entry = ttk.Entry(self.frame3, textvariable=self.download_file_var)
+        self.download_browse_button = ttk.Button(self.frame3, text="...")
         self.download_button = ttk.Button(self.frame3, text="Download")
 
         self.init_window()
@@ -76,7 +81,7 @@ class Window(tk.Frame):
         self.frame2.pack(padx=5, pady=5, fill=tk.X)
         self.frame2.grid_columnconfigure(0, weight=0)
         self.frame2.grid_columnconfigure(1, weight=1)
-        self.upload_lbl.grid(row=0, column=0, padx=(0,5), pady=5, sticky=tk.W)
+        self.upload_label.grid(row=0, column=0, padx=(0,5), pady=5, sticky=tk.W)
         self.upload_entry.grid(row=0, column=1, padx=5, pady=5, sticky=tk.E+tk.W)
         self.upload_browse_button.grid(row=0, column=2, padx=5, pady=5)
         self.mer_list.grid(row=1, column=0, columnspan=2, padx=5, pady=5, sticky=tk.W+tk.E)
@@ -86,7 +91,12 @@ class Window(tk.Frame):
 
         # download frame
         self.frame3.pack(padx=5, pady=5, fill=tk.X)
-        self.download_button.grid(row=0, column=0, padx=5, pady=5)
+        self.frame3.grid_columnconfigure(0, weight=0)
+        self.frame3.grid_columnconfigure(1, weight=1)
+        self.download_label.grid(row=0, column=0, padx=(0,5), pady=5, sticky=tk.W)
+        self.download_entry.grid(row=0, column=1, padx=5, pady=5, sticky=tk.W+tk.E)
+        self.download_browse_button.grid(row=0, column=2, padx=5, pady=5)
+        self.download_button.grid(row=1, column=0, padx=5, pady=5)
 
     def _find_panelview_ip(self):
         """ Send list identity and save all HMI IP addresses
