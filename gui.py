@@ -203,6 +203,7 @@ class Window(tk.Frame):
                                  delete_logx=delete_logs,
                                  replace_comms=replace_comms,
                                  run_at_starupt=run_at_start)
+            messagebox.showinfo("Success", "Download complete!")
         except Exception as e:
             messagebox.showerror("Error", "Failed to download MER, {}".format(e))
 
