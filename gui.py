@@ -84,6 +84,7 @@ class Window(tk.Frame):
         self.upload_button.grid(row=3, column=0, padx=5, pady=5)
         self.upload_all_button.grid(row=3, column=1, padx=5, pady=5)
 
+        # download frame
         self.frame3.pack(padx=5, pady=5, fill=tk.X)
         self.download_button.grid(row=0, column=0, padx=5, pady=5)
 
@@ -98,8 +99,9 @@ class Window(tk.Frame):
                 for device in ret.Value:
                     if device.DeviceID == 24:
                         hmis.append(device.IPAddress)
-        self.ip_list['values'] = hmis
-        self.ip_list.current(0)
+        if hmis:
+            self.ip_list['values'] = hmis
+            self.ip_list.current(0)
 
     def _get_runtime_files(self, event=None):
         """ Get the list of MER files that exist
@@ -107,10 +109,11 @@ class Window(tk.Frame):
         """
         self.mer_list.delete(0, tk.END)
         ip_address = self.ip_list.get()
-        meu = MEUtility(ip_address)
-        stuff = meu.get_terminal_info()
-        for f in stuff.device.files:
-            self.mer_list.insert('end', f)
+        if ip_address:
+            meu = MEUtility(ip_address)
+            stuff = meu.get_terminal_info()
+            for f in stuff.device.files:
+                self.mer_list.insert('end', f)
 
     def browse_upload_directory(self):
         """ Select new upload directory
