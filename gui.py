@@ -59,8 +59,8 @@ class Window(tk.Frame):
         self.frame3 = ttk.LabelFrame(self.main, text="Download MER")
         self.download_label = ttk.Label(self.frame3, text="File to Download:")
         self.download_entry = ttk.Entry(self.frame3, textvariable=self.download_file_var)
-        self.download_browse_button = ttk.Button(self.frame3, text="...")
-        self.download_button = ttk.Button(self.frame3, text="Download")
+        self.download_browse_button = ttk.Button(self.frame3, text="...", command=self.browse_download_file)
+        self.download_button = ttk.Button(self.frame3, text="Download", command=self.download)
 
         self.init_window()
         self._find_panelview_ip()
@@ -151,6 +151,11 @@ class Window(tk.Frame):
         else:
             messagebox.showinfo("Information", "No MER was selected")
 
+    def browse_download_file(self):
+        filetypes = [('MER files', '*.mer')]
+        file_name = filedialog.askopenfilename(filetypes=filetypes)
+        self.download_file_var.set(file_name)
+
     def upload_all(self):
         """ Upload all applications from the terminal
         """
@@ -164,6 +169,17 @@ class Window(tk.Frame):
         except Exception as e:
             messagebox.showerror("Error", "Something went wrong, {}".format(e))
 
+    def download(self):
+        ip_address = self.ip_list.get()
+        mer_path = self.download_entry.get()
+
+        if ip_address == "":
+            messagebox.showwarning("Uh-oh", "No IP address was entered")
+            return
+        if mer_path == "":
+            messagebox.showwarning("Uh-oh", "No MER file was selected to download")
+            return
+        print(ip_address, mer_path)
 
 if __name__ == "__main__":
     root = tk.Tk()
