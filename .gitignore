@@ -174,3 +174,4 @@ bin/
 lib64
 Scripts/
 pyvenv.cfg
+*.mer
