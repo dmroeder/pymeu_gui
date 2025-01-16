@@ -30,6 +30,8 @@ class Window(tk.Frame):
         self.upload_path_var = tk.StringVar()
         self.download_file_var = tk.StringVar()
         self.overwrite_var = tk.IntVar()
+        self.replace_comms_var = tk.IntVar()
+        self.delete_logs_var = tk.IntVar()
 
         self.mer_file_var.set("")
         self.ip_address_var.set("192.168.1.11")
@@ -50,7 +52,6 @@ class Window(tk.Frame):
         self.upload_browse_button = ttk.Button(self.frame2, text="...", command=self.browse_upload_directory)
         self.upload_button = ttk.Button(self.frame2, text="Upload Selected", command=self.upload)
         self.upload_all_button = ttk.Button(self.frame2, text="Upload All", command=self.upload_all)
-
         self.overwrite_cb = ttk.Checkbutton(self.frame2, text="Overwrite existing files on upload?",
                                             variable=self.overwrite_var,
                                             onvalue=1, offvalue=0)
@@ -61,6 +62,12 @@ class Window(tk.Frame):
         self.download_entry = ttk.Entry(self.frame3, textvariable=self.download_file_var)
         self.download_browse_button = ttk.Button(self.frame3, text="...", command=self.browse_download_file)
         self.download_button = ttk.Button(self.frame3, text="Download", command=self.download)
+        self.replace_comms_cb = ttk.Checkbutton(self.frame3, text="Replace communications? (hint, you should)",
+                                                variable=self.replace_comms_var,
+                                                onvalue=1, offvalue=0)
+        self.delete_logs_cb = ttk.Checkbutton(self.frame3, text="Delete logx?",
+                                              variable=self.delete_logs_var,
+                                              onvalue=1, offval=0)
 
         self.init_window()
         self._find_panelview_ip()
@@ -96,7 +103,9 @@ class Window(tk.Frame):
         self.download_label.grid(row=0, column=0, padx=(0,5), pady=5, sticky=tk.W)
         self.download_entry.grid(row=0, column=1, padx=5, pady=5, sticky=tk.W+tk.E)
         self.download_browse_button.grid(row=0, column=2, padx=5, pady=5)
-        self.download_button.grid(row=1, column=0, padx=5, pady=5)
+        self.replace_comms_cb.grid(row=1, column=0, columnspan=2, padx=5, pady=5, sticky=tk.W)
+        self.delete_logs_cb.grid(row=1, column=2, padx=5, pady=5, sticky=tk.W)
+        self.download_button.grid(row=2, column=0, padx=5, pady=5)
 
     def _find_panelview_ip(self):
         """ Send list identity and save all HMI IP addresses
@@ -177,6 +186,8 @@ class Window(tk.Frame):
         ip_address = self.ip_list.get()
         mer_path = self.download_entry.get()
         overwrite = self.overwrite_var.get()
+        replace_comms = self.replace_comms_var.get()
+        delete_logs = self.delete_logs_var.get()
         if ip_address == "":
             messagebox.showwarning("Uh-oh", "No IP address was entered")
             return
@@ -185,7 +196,7 @@ class Window(tk.Frame):
             return
         try:
             meu = MEUtility(ip_address)
-            stuff = meu.download(mer_path, overwrite=overwrite)
+            stuff = meu.download(mer_path, overwrite=overwrite, delete_logx=delete_logs, replace_comms=replace_comms)
         except Exception as e:
             messagebox.showerror("Error", "Failed to download MER, {}".format(e))
 
