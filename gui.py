@@ -9,9 +9,9 @@ from tkinter import ttk
 
 """ TODO:
 Add logging
-Add Download
 Add file dropdowns maybe?
 Add open upload directory
+Add check for the file being protected
 """
 
 
@@ -34,10 +34,7 @@ class Window(tk.Frame):
         self.delete_logs_var = tk.IntVar()
         self.run_on_start_var = tk.IntVar()
 
-        self.mer_file_var.set("")
-        self.ip_address_var.set("192.168.1.11")
         self.upload_path_var.set(current_path)
-        self.download_file_var.set("")
 
         # settings frame
         self.frame1 = ttk.LabelFrame(self.main, text="Settings")
