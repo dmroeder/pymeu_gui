@@ -1,6 +1,8 @@
 # pymeu_gui
 GUI front end for the Python ME Transfer Utility
 
+![Screenshot](image.png)
+
 ## features
 * Works indpendent of any Rockwell software
 * Discover all PanelView Plus terminals on the network
