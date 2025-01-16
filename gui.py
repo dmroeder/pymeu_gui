@@ -151,11 +151,6 @@ class Window(tk.Frame):
         else:
             messagebox.showinfo("Information", "No MER was selected")
 
-    def browse_download_file(self):
-        filetypes = [('MER files', '*.mer')]
-        file_name = filedialog.askopenfilename(filetypes=filetypes)
-        self.download_file_var.set(file_name)
-
     def upload_all(self):
         """ Upload all applications from the terminal
         """
@@ -169,17 +164,30 @@ class Window(tk.Frame):
         except Exception as e:
             messagebox.showerror("Error", "Something went wrong, {}".format(e))
 
+    def browse_download_file(self):
+        """ Open system file picker
+        """
+        filetypes = [('MER files', '*.mer')]
+        file_name = filedialog.askopenfilename(filetypes=filetypes)
+        self.download_file_var.set(file_name)
+
     def download(self):
+        """ Download MER file to PanelView
+        """
         ip_address = self.ip_list.get()
         mer_path = self.download_entry.get()
-
+        overwrite = self.overwrite_var.get()
         if ip_address == "":
             messagebox.showwarning("Uh-oh", "No IP address was entered")
             return
         if mer_path == "":
             messagebox.showwarning("Uh-oh", "No MER file was selected to download")
             return
-        print(ip_address, mer_path)
+        try:
+            meu = MEUtility(ip_address)
+            stuff = meu.download(mer_path, overwrite=overwrite)
+        except Exception as e:
+            messagebox.showerror("Error", "Failed to download MER, {}".format(e))
 
 if __name__ == "__main__":
     root = tk.Tk()
