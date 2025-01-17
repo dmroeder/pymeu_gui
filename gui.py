@@ -90,36 +90,36 @@ class Window(tk.Frame):
         """
 
         # settings frame
-        self.frame1.pack(padx=5, pady=5, fill=tk.X)
+        self.frame1.pack(padx=5, pady=10, fill=tk.X)
         self.frame1.grid_columnconfigure(0, weight=0)
         self.frame1.grid_columnconfigure(1, weight=1)
         self.ip_label.grid(row=0, column=0, padx=(0,5), pady=5, sticky=tk.W)
         self.ip_list.grid(row=0, column=1, padx=5, pady=5, sticky=tk.E+tk.W)
 
         # upload frame
-        self.frame2.pack(padx=5, pady=5, fill=tk.X)
+        self.frame2.pack(padx=5, pady=10, fill=tk.X)
         self.frame2.grid_columnconfigure(0, weight=0)
         self.frame2.grid_columnconfigure(1, weight=1)
-        self.upload_label.grid(row=0, column=0, padx=(0,5), pady=5, sticky=tk.W)
-        self.upload_entry.grid(row=0, column=1, padx=5, pady=5, sticky=tk.E+tk.W)
-        self.upload_browse_button.grid(row=0, column=2, padx=5, pady=5)
-        self.mer_list.grid(row=1, column=0, columnspan=3, padx=5, pady=5, sticky=tk.W+tk.E)
+        self.upload_label.grid(row=0, column=0, padx=(0,5), pady=5, sticky=tk.E)
+        self.upload_entry.grid(row=0, column=1, columnspan=2, padx=5, pady=5, sticky=tk.E+tk.W)
+        self.upload_browse_button.grid(row=0, column=3, padx=5, pady=5)
+        self.mer_list.grid(row=1, column=0, columnspan=4, padx=5, pady=5, sticky=tk.W+tk.E)
         self.overwrite_upload_cb.grid(row=2, column=0, columnspan=2, padx=5, pady=5, sticky=tk.W)
-        self.upload_button.grid(row=3, column=0, padx=5, pady=5)
-        self.upload_all_button.grid(row=3, column=1, padx=5, pady=5, sticky=tk.W)
+        self.upload_button.grid(row=2, column=2, padx=5, pady=5)
+        self.upload_all_button.grid(row=2, column=3, padx=5, pady=5, sticky=tk.W)
 
         # download frame
-        self.frame3.pack(padx=5, pady=5, fill=tk.X)
+        self.frame3.pack(padx=5, pady=10, fill=tk.X)
         self.frame3.grid_columnconfigure(0, weight=0)
         self.frame3.grid_columnconfigure(1, weight=1)
         self.download_label.grid(row=0, column=0, padx=(0,5), pady=5, sticky=tk.W)
-        self.download_entry.grid(row=0, column=1, padx=5, pady=5, sticky=tk.W+tk.E)
-        self.download_browse_button.grid(row=0, column=2, padx=5, pady=5)
+        self.download_entry.grid(row=0, column=1, columnspan=2, padx=5, pady=5, sticky=tk.W+tk.E)
+        self.download_browse_button.grid(row=0, column=3, padx=5, pady=5)
         self.overwrite_download_cb.grid(row=1, column=0, columnspan=2, padx=5, pady=5, sticky=tk.W)
         self.replace_comms_cb.grid(row=2, column=0, columnspan=2, padx=5, pady=5, sticky=tk.W)
         self.delete_logs_cb.grid(row=3, column=0, padx=5, pady=5, sticky=tk.W)
         self.run_on_start_cb.grid(row=3, column=1, columnspan=2, padx=5, pady=6, sticky=tk.W)
-        self.download_button.grid(row=4, column=0, padx=5, pady=5)
+        self.download_button.grid(row=3, column=3, padx=5, pady=5)
 
     def _get_file(self, file_name):
         if hasattr(sys, "_MEIPASS"):
@@ -244,7 +244,7 @@ class Window(tk.Frame):
 
 if __name__ == "__main__":
     root = tk.Tk()
-    root.geometry("620x650")
+    root.geometry("620x600")
     root.title("A Better Transfer Utility? Maybe?")
     root.resizable(False, False)
     app = Window(root)
