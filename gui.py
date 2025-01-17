@@ -3,6 +3,7 @@ import pylogix
 import sys
 import tkinter as tk
 
+from mer_tools import mer
 from pymeu import MEUtility
 from tkinter import filedialog
 from tkinter import messagebox
@@ -202,6 +203,7 @@ class Window(tk.Frame):
         replace_comms = self.replace_comms_var.get()
         delete_logs = self.delete_logs_var.get()
         run_at_start = self.run_on_start_var.get()
+
         if ip_address == "":
             messagebox.showwarning("Uh-oh", "No IP address was entered")
             return
@@ -209,7 +211,17 @@ class Window(tk.Frame):
             messagebox.showwarning("Uh-oh", "No MER file was selected to download")
             return
         try:
+            # get MER file version
+            file_version = mer(mer_path).get_version()[1:]
+            file_version = int(file_version.split(".")[0])
             meu = MEUtility(ip_address)
+            terminal_info = meu.get_terminal_info()
+            terminal_version = int(terminal_info.device.version_major)
+
+            if file_version > terminal_version:
+                messagebox.showwarning("Abort!", "Your MER file version ({}) is newer than the terminal firmware ({})".format(
+                    file_version, terminal_info.device.version_major))
+                return
             stuff = meu.download(mer_path, overwrite=overwrite,
                                  delete_logx=delete_logs,
                                  replace_comms=replace_comms,
@@ -222,7 +234,7 @@ class Window(tk.Frame):
 if __name__ == "__main__":
     root = tk.Tk()
     root.geometry("620x620")
-    root.title("A Better Transfer Utility?")
+    root.title("A Better Transfer Utility? Maybe?")
     root.resizable(False, False)
     app = Window(root)
     root.mainloop()
