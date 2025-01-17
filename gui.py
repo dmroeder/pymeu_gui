@@ -48,7 +48,7 @@ class Window(tk.Frame):
         self.ip_list.bind("<<ComboboxSelected>>", self._get_runtime_files)
 
         # upload frame
-        self.frame2 = ttk.LabelFrame(self.main, text="Upload")
+        self.frame2 = ttk.LabelFrame(self.main, text="Upload MER")
         self.upload_label = ttk.Label(self.frame2, text="Upload path:")
         self.upload_entry = ttk.Entry(self.frame2, textvariable=self.upload_path_var)
         self.mer_list = tk.Listbox(self.frame2)
