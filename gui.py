@@ -35,12 +35,14 @@ class Window(tk.Frame):
         self.ip_address_var = tk.StringVar()
         self.upload_path_var = tk.StringVar()
         self.download_file_var = tk.StringVar()
-        self.overwrite_var = tk.IntVar()
+        self.overwrite_upload_var = tk.IntVar()
+        self.overwrite_download_var = tk.IntVar()
         self.replace_comms_var = tk.IntVar()
         self.delete_logs_var = tk.IntVar()
         self.run_on_start_var = tk.IntVar()
 
         self.upload_path_var.set(current_path)
+        self.overwrite_download_var.set(1)
 
         # settings frame
         self.frame1 = ttk.LabelFrame(self.main, text="Settings")
@@ -56,9 +58,9 @@ class Window(tk.Frame):
         self.upload_browse_button = ttk.Button(self.frame2, text="...", command=self.browse_upload_directory)
         self.upload_button = ttk.Button(self.frame2, text="Upload Selected", command=self.upload)
         self.upload_all_button = ttk.Button(self.frame2, text="Upload All", command=self.upload_all)
-        self.overwrite_cb = ttk.Checkbutton(self.frame2, text="Overwrite existing files on upload?",
-                                            variable=self.overwrite_var,
-                                            onvalue=1, offvalue=0)
+        self.overwrite_upload_cb = ttk.Checkbutton(self.frame2, text="Overwrite existing files on upload?",
+                                                   variable=self.overwrite_upload_var,
+                                                   onvalue=1, offvalue=0)
 
         # download frame
         self.frame3 = ttk.LabelFrame(self.main, text="Download MER")
@@ -66,6 +68,9 @@ class Window(tk.Frame):
         self.download_entry = ttk.Entry(self.frame3, textvariable=self.download_file_var)
         self.download_browse_button = ttk.Button(self.frame3, text="...", command=self.browse_download_file)
         self.download_button = ttk.Button(self.frame3, text="Download", command=self.download)
+        self.overwrite_download_cb = ttk.Checkbutton(self.frame3, text="Overwrite file?",
+                                                     variable=self.overwrite_download_var,
+                                                     onvalue=1, offvalue=0)
         self.replace_comms_cb = ttk.Checkbutton(self.frame3, text="Replace communications? (hint, you should)",
                                                 variable=self.replace_comms_var,
                                                 onvalue=1, offvalue=0)
@@ -99,7 +104,7 @@ class Window(tk.Frame):
         self.upload_entry.grid(row=0, column=1, padx=5, pady=5, sticky=tk.E+tk.W)
         self.upload_browse_button.grid(row=0, column=2, padx=5, pady=5)
         self.mer_list.grid(row=1, column=0, columnspan=3, padx=5, pady=5, sticky=tk.W+tk.E)
-        self.overwrite_cb.grid(row=2, column=0, columnspan=2, padx=5, pady=5, sticky=tk.W)
+        self.overwrite_upload_cb.grid(row=2, column=0, columnspan=2, padx=5, pady=5, sticky=tk.W)
         self.upload_button.grid(row=3, column=0, padx=5, pady=5)
         self.upload_all_button.grid(row=3, column=1, padx=5, pady=5, sticky=tk.W)
 
@@ -110,9 +115,10 @@ class Window(tk.Frame):
         self.download_label.grid(row=0, column=0, padx=(0,5), pady=5, sticky=tk.W)
         self.download_entry.grid(row=0, column=1, padx=5, pady=5, sticky=tk.W+tk.E)
         self.download_browse_button.grid(row=0, column=2, padx=5, pady=5)
-        self.replace_comms_cb.grid(row=1, column=0, columnspan=2, padx=5, pady=5, sticky=tk.W)
-        self.delete_logs_cb.grid(row=2, column=0, padx=5, pady=5, sticky=tk.W)
-        self.run_on_start_cb.grid(row=2, column=1, columnspan=2, padx=5, pady=6, sticky=tk.W)
+        self.overwrite_download_cb.grid(row=1, column=0, columnspan=2, padx=5, pady=5, sticky=tk.W)
+        self.replace_comms_cb.grid(row=2, column=0, columnspan=2, padx=5, pady=5, sticky=tk.W)
+        self.delete_logs_cb.grid(row=3, column=0, padx=5, pady=5, sticky=tk.W)
+        self.run_on_start_cb.grid(row=3, column=1, columnspan=2, padx=5, pady=6, sticky=tk.W)
         self.download_button.grid(row=4, column=0, padx=5, pady=5)
 
     def _get_file(self, file_name):
@@ -165,7 +171,7 @@ class Window(tk.Frame):
             try:
                 ip_address = self.ip_list.get()
                 upload_path = self.upload_path_var.get() + "/" + item
-                overwrite = self.overwrite_var.get()
+                overwrite = self.overwrite_upload_var.get()
                 meu = MEUtility(ip_address)
                 stuff = meu.upload(upload_path, overwrite=overwrite)
                 messagebox.showinfo("Information", "Uploading {} complete".format(item))
@@ -179,7 +185,7 @@ class Window(tk.Frame):
         """
         ip_address = self.ip_list.get()
         upload_path = self.upload_path_var.get()
-        overwrite = self.overwrite_var.get()
+        overwrite = self.overwrite_upload_var.get()
         try:
             meu = MEUtility(ip_address)
             stuff = meu.upload_all(upload_path, overwrite=overwrite)
@@ -199,7 +205,7 @@ class Window(tk.Frame):
         """
         ip_address = self.ip_list.get()
         mer_path = self.download_entry.get()
-        overwrite = self.overwrite_var.get()
+        overwrite = self.overwrite_download_var.get()
         replace_comms = self.replace_comms_var.get()
         delete_logs = self.delete_logs_var.get()
         run_at_start = self.run_on_start_var.get()
@@ -238,7 +244,7 @@ class Window(tk.Frame):
 
 if __name__ == "__main__":
     root = tk.Tk()
-    root.geometry("620x620")
+    root.geometry("620x650")
     root.title("A Better Transfer Utility? Maybe?")
     root.resizable(False, False)
     app = Window(root)
