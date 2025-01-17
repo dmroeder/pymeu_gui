@@ -13,7 +13,6 @@ from tkinter import ttk
 Add logging
 Add file dropdowns maybe?
 Add open upload directory
-Add check for the file being protected
 """
 
 
@@ -164,6 +163,9 @@ class Window(tk.Frame):
     def upload(self):
         """ Upload all applications from the terminal
         """
+        if not os.path.isdir(self.upload_path_var.get()):
+            messagebox.showerror("Error", "Please choose a directory to upload to.")
+            return
         indexes = self.mer_list.curselection()
         if indexes:
             selected = indexes[0]
@@ -183,6 +185,10 @@ class Window(tk.Frame):
     def upload_all(self):
         """ Upload all applications from the terminal
         """
+        if not os.path.isdir(self.upload_path_var.get()):
+            messagebox.showerror("Error", "Please choose a directory to upload to.")
+            return
+
         ip_address = self.ip_list.get()
         upload_path = self.upload_path_var.get()
         overwrite = self.overwrite_upload_var.get()
