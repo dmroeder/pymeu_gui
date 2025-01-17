@@ -221,7 +221,7 @@ class Window(tk.Frame):
 
 if __name__ == "__main__":
     root = tk.Tk()
-    root.geometry("600x600")
+    root.geometry("620x620")
     root.title("A Better Transfer Utility?")
     root.resizable(False, False)
     app = Window(root)
