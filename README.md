@@ -1,7 +1,7 @@
 # pymeu_gui
 GUI front end for the Python ME Transfer Utility
 
-![Screenshot](image.png)
+![Screenshot](resources/image.png)
 
 ## features
 * Works indpendent of any Rockwell software
@@ -12,3 +12,4 @@ GUI front end for the Python ME Transfer Utility
 
 ## Acknowledgements
 **aawilliams85** for the excellent pymeu utility [aawilliams85](https://github.com/aawilliams85)
+**rdbende** for the sweet theme [rdbende]{https://github.com/rdbende/Azure-ttk-theme}

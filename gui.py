@@ -1,5 +1,6 @@
 import os
 import pylogix
+import sys
 import tkinter as tk
 
 from pymeu import MEUtility
@@ -23,6 +24,10 @@ class Window(tk.Frame):
 
         current_path = os.path.dirname(__file__)
         current_path = current_path.replace(os.sep, '/')
+
+        tcl_file = self._get_file("resources/azure.tcl")
+        self.tk.call("source", tcl_file)
+        self.tk.call("set_theme", "dark")
 
         # variables
         self.mer_file_var = tk.StringVar()
@@ -108,6 +113,12 @@ class Window(tk.Frame):
         self.delete_logs_cb.grid(row=2, column=0, padx=5, pady=5, sticky=tk.W)
         self.run_on_start_cb.grid(row=2, column=1, columnspan=2, padx=5, pady=6, sticky=tk.W)
         self.download_button.grid(row=4, column=0, padx=5, pady=5)
+
+    def _get_file(self, file_name):
+        if hasattr(sys, "_MEIPASS"):
+            return os.path.join(sys._MEIPASS, file_name)
+        else:
+            return file_name
 
     def _find_panelview_ip(self):
         """ Send list identity and save all HMI IP addresses
@@ -210,7 +221,7 @@ class Window(tk.Frame):
 
 if __name__ == "__main__":
     root = tk.Tk()
-    root.geometry("600x550")
+    root.geometry("600x600")
     root.title("A Better Transfer Utility?")
     root.resizable(False, False)
     app = Window(root)
