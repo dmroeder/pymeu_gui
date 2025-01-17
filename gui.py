@@ -212,11 +212,16 @@ class Window(tk.Frame):
             return
         try:
             # get MER file version
-            file_version = mer(mer_path).get_version()[1:]
+            m = mer(mer_path)
+            file_version = m.get_version()[1:]
             file_version = int(file_version.split(".")[0])
             meu = MEUtility(ip_address)
             terminal_info = meu.get_terminal_info()
             terminal_version = int(terminal_info.device.version_major)
+
+            protection_status = m.get_protection()
+            if protection_status[0] >= 1:
+                messagebox.showwarning("Warning", "Your mer file was set to never allow conversion.  Anyone who uploads this won't be allowed to restore it.")
 
             if file_version > terminal_version:
                 messagebox.showwarning("Abort!", "Your MER file version ({}) is newer than the terminal firmware ({})".format(
