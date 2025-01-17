@@ -1,3 +1,4 @@
+import logging
 import os
 import pylogix
 import sys
@@ -28,6 +29,14 @@ class Window(tk.Frame):
         tcl_file = self._get_file("resources/azure.tcl")
         self.tk.call("source", tcl_file)
         self.tk.call("set_theme", "dark")
+
+        self.log_file = "logjammin.log"
+        logging.basicConfig(filename=self.log_file, filemode="w", format='%(asctime)s - %(message)s')
+        self.log = logging.getLogger()
+        self.log.setLevel(logging.DEBUG)
+
+        self.log.info("INIT - Starting pymeu_gui")
+        self.log.info("INIT - pylogix version {}".format(pylogix.__version__))
 
         # variables
         self.mer_file_var = tk.StringVar()
@@ -229,7 +238,10 @@ class Window(tk.Frame):
             file_version = int(file_version.split(".")[0])
             meu = MEUtility(ip_address)
             terminal_info = meu.get_terminal_info()
-            terminal_version = int(terminal_info.device.version_major)
+            terminal_version = terminal_info.device.me_version
+            terminal_version = int(terminal_version.split(".")[0])
+
+            self.log.info("GUI - file_version {}, terminal_version {}".format(file_version, terminal_version))
 
             protection_status = m.get_protection()
             if protection_status[0] >= 1:
