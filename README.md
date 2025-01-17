@@ -9,6 +9,8 @@ GUI front end for the Python ME Transfer Utility
 * Easily select a PanelView by IP address
 * Upload one MER or upload all files
 * Doesn't have the EDS subsystem, so all you need is the IP address
+* Verifies MER version is the same or older than terminal firmware
+* Alerts if MER is protected
 
 ## Acknowledgements
 * **aawilliams85** for the excellent pymeu utility [aawilliams85](https://github.com/aawilliams85)
