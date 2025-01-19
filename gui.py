@@ -105,12 +105,16 @@ class Window(tk.Frame):
 
         # Add file dropdown with exit
         f = tk.Menu(menu)
+        f.add_command(label="Exit", command=self.close)
+        menu.add_cascade(label="File", menu=f)
+
+        # Add edit dropdown menu
+        f = tk.Menu(menu)
         f.add_checkbutton(label="Dark theme", onvalue=1, offvalue=0,
                           variable=self.dark_theme_var, command=self.set_dark_theme)
         f.add_checkbutton(label="Light theme", onvalue=1, offvalue=0,
                           variable=self.light_theme_var, command=self.set_light_theme)
-        f.add_command(label="Exit", command=self.close)
-        menu.add_cascade(label="File", menu=f)
+        menu.add_cascade(label="Edit", menu=f)
 
         # settings frame
         self.frame1.pack(padx=5, pady=10, fill=tk.X)
