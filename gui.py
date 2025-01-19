@@ -48,9 +48,12 @@ class Window(tk.Frame):
         self.replace_comms_var = tk.IntVar()
         self.delete_logs_var = tk.IntVar()
         self.run_on_start_var = tk.IntVar()
+        self.dark_theme_var = tk.IntVar()
+        self.light_theme_var = tk.IntVar()
 
         self.upload_path_var.set(current_path)
         self.overwrite_download_var.set(1)
+        self.dark_theme_var.set(1)
 
         # settings frame
         self.frame1 = ttk.LabelFrame(self.main, text="Settings")
@@ -96,6 +99,18 @@ class Window(tk.Frame):
     def init_window(self):
         """ Place all GUI items
         """
+        # create a menu
+        menu = tk.Menu(self.main)
+        self.main.config(menu=menu)
+
+        # Add file dropdown with exit
+        f = tk.Menu(menu)
+        f.add_checkbutton(label="Dark theme", onvalue=1, offvalue=0,
+                          variable=self.dark_theme_var, command=self.set_dark_theme)
+        f.add_checkbutton(label="Light theme", onvalue=1, offvalue=0,
+                          variable=self.light_theme_var, command=self.set_light_theme)
+        f.add_command(label="Exit", command=self.close)
+        menu.add_cascade(label="File", menu=f)
 
         # settings frame
         self.frame1.pack(padx=5, pady=10, fill=tk.X)
@@ -258,6 +273,22 @@ class Window(tk.Frame):
             messagebox.showinfo("Success", "Download complete!")
         except Exception as e:
             messagebox.showerror("Error", "Failed to download MER, {}".format(e))
+
+    def set_dark_theme(self):
+        self.tk.call("set_theme", "dark")
+        self.dark_theme_var.set(1)
+        self.light_theme_var.set(0)
+
+    def set_light_theme(self):
+        self.tk.call("set_theme", "light")
+        self.dark_theme_var.set(0)
+        self.light_theme_var.set(1)
+
+    def close(self):
+        """ Exit app
+        """
+        self.log.info("GUI - User exit requested")
+        sys.exit()
 
 
 if __name__ == "__main__":
