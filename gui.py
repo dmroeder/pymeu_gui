@@ -57,13 +57,17 @@ class Window(tk.Frame):
         self.light_theme_var = tk.BooleanVar()
 
         self.upload_path_var.set(current_path)
-        self.overwrite_download_var.set(1)
 
         # load config
         if theme == "dark":
             self.dark_theme_var.set(1)
         else:
             self.light_theme_var.set(1)
+        self.overwrite_upload_var.set(self.config.get('general', 'overwrite_upload'))
+        self.overwrite_download_var.set(self.config.get('general', 'overwrite_download'))
+        self.replace_comms_var.set(self.config.get('general', 'replace_comms'))
+        self.delete_logs_var.set(self.config.get('general', 'delete_logs'))
+        self.run_on_start_var.set(self.config.get('general', 'run_at_start'))
 
         # settings frame
         self.frame1 = ttk.LabelFrame(self.main, text="Settings")
@@ -124,6 +128,7 @@ class Window(tk.Frame):
                           variable=self.dark_theme_var, command=self.set_dark_theme)
         f.add_checkbutton(label="Light theme", onvalue=1, offvalue=0,
                           variable=self.light_theme_var, command=self.set_light_theme)
+        f.add_command(label="Save defaults", command=self.save_config)
         menu.add_cascade(label="Edit", menu=f)
 
         # settings frame
@@ -289,24 +294,41 @@ class Window(tk.Frame):
             messagebox.showerror("Error", "Failed to download MER, {}".format(e))
 
     def set_dark_theme(self):
+        """ Switch the current theme to dark,
+        update the drop down menu
+        """
         self.tk.call("set_theme", "dark")
         self.dark_theme_var.set(1)
         self.light_theme_var.set(0)
 
     def set_light_theme(self):
+        """ Switch the current theme to light,
+        update the drop down menu
+        """
         self.tk.call("set_theme", "light")
         self.dark_theme_var.set(0)
         self.light_theme_var.set(1)
 
-    def close(self):
-        """ Exit app
+    def save_config(self):
+        """ Save the current settings to the config file
         """
         if self.dark_theme_var.get():
             self.config.set('general', 'theme', 'dark')
         else:
             self.config.set('general', 'theme', 'light')
+
+        self.config.set('general', 'overwrite_upload', str(self.overwrite_upload_var.get()))
+        self.config.set('general', 'overwrite_download', str(self.overwrite_download_var.get()))
+        self.config.set('general', 'replace_comms', str(self.replace_comms_var.get()))
+        self.config.set('general', 'delete_logs', str(self.delete_logs_var.get()))
+        self.config.set('general', 'run_at_start', str(self.run_on_start_var.get()))
+
         with open('config.ini', 'w') as configfile:
             self.config.write(configfile)
+
+    def close(self):
+        """ Exit app
+        """
         self.log.info("GUI - User exit requested")
         sys.exit()
 
