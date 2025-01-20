@@ -23,16 +23,6 @@ class Window(tk.Frame):
     def __init__(self, main=None):
         tk.Frame.__init__(self, main)
         self.main = main
-        self.config = configparser.ConfigParser()
-        self.config.read('config.ini')
-
-        current_path = os.path.dirname(__file__)
-        current_path = current_path.replace(os.sep, '/')
-        
-        theme = self.config.get("general", "theme")
-        tcl_file = self._get_file("resources/azure.tcl")
-        self.tk.call("source", tcl_file)
-        self.tk.call("set_theme", theme)
 
         self.log_file = "logjammin.log"
         logging.basicConfig(filename=self.log_file, filemode="w", format='%(asctime)s - %(message)s')
@@ -41,6 +31,19 @@ class Window(tk.Frame):
 
         self.log.info("INIT - Starting pymeu_gui")
         self.log.info("INIT - pylogix version {}".format(pylogix.__version__))
+
+        self.config = configparser.ConfigParser()
+        if not os.path.exists('config.ini'):
+            self._create_new_config()
+        self.config.read('config.ini')
+
+        current_path = os.path.dirname(__file__)
+        current_path = current_path.replace(os.sep, '/')
+
+        theme = self.config.get("general", "theme")
+        tcl_file = self._get_file("resources/azure.tcl")
+        self.tk.call("source", tcl_file)
+        self.tk.call("set_theme", theme)
 
         # variables
         self.mer_file_var = tk.StringVar()
@@ -195,6 +198,20 @@ class Window(tk.Frame):
             stuff = meu.get_terminal_info()
             for f in stuff.device.files:
                 self.mer_list.insert('end', f)
+
+    def _create_new_config(self):
+        """ Create a new configuration file
+        """
+        self.log.info("GUI - No config file found, creating new one")
+        self.config['general'] = {'theme':'dark',
+                                  'delete_logs':'False',
+                                  'run_at_start':'False',
+                                  'replace_comms':'False',
+                                  'overwrite_download':'False',
+                                  'overwrite_upload':'False'}
+
+        with open('config.ini', 'w') as configfile:
+            self.config.write(configfile)
 
     def browse_upload_directory(self):
         """ Select new upload directory
