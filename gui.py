@@ -1,3 +1,4 @@
+import configparser
 import logging
 import os
 import pylogix
@@ -22,13 +23,16 @@ class Window(tk.Frame):
     def __init__(self, main=None):
         tk.Frame.__init__(self, main)
         self.main = main
+        self.config = configparser.ConfigParser()
+        self.config.read('config.ini')
 
         current_path = os.path.dirname(__file__)
         current_path = current_path.replace(os.sep, '/')
-
+        
+        theme = self.config.get("general", "theme")
         tcl_file = self._get_file("resources/azure.tcl")
         self.tk.call("source", tcl_file)
-        self.tk.call("set_theme", "dark")
+        self.tk.call("set_theme", theme)
 
         self.log_file = "logjammin.log"
         logging.basicConfig(filename=self.log_file, filemode="w", format='%(asctime)s - %(message)s')
@@ -53,7 +57,11 @@ class Window(tk.Frame):
 
         self.upload_path_var.set(current_path)
         self.overwrite_download_var.set(1)
-        self.dark_theme_var.set(1)
+
+        if theme == "dark":
+            self.dark_theme_var.set(1)
+        else:
+            self.light_theme_var.set(1)
 
         # settings frame
         self.frame1 = ttk.LabelFrame(self.main, text="Settings")
@@ -291,6 +299,12 @@ class Window(tk.Frame):
     def close(self):
         """ Exit app
         """
+        if self.dark_theme_var.get():
+            self.config.set('general', 'theme', 'dark')
+        else:
+            self.config.set('general', 'theme', 'light')
+        with open('config.ini', 'w') as configfile:
+            self.config.write(configfile)
         self.log.info("GUI - User exit requested")
         sys.exit()
 
