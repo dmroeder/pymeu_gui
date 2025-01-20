@@ -47,17 +47,19 @@ class Window(tk.Frame):
         self.ip_address_var = tk.StringVar()
         self.upload_path_var = tk.StringVar()
         self.download_file_var = tk.StringVar()
-        self.overwrite_upload_var = tk.IntVar()
-        self.overwrite_download_var = tk.IntVar()
-        self.replace_comms_var = tk.IntVar()
-        self.delete_logs_var = tk.IntVar()
-        self.run_on_start_var = tk.IntVar()
-        self.dark_theme_var = tk.IntVar()
-        self.light_theme_var = tk.IntVar()
+
+        self.overwrite_upload_var = tk.BooleanVar()
+        self.overwrite_download_var = tk.BooleanVar()
+        self.replace_comms_var = tk.BooleanVar()
+        self.delete_logs_var = tk.BooleanVar()
+        self.run_on_start_var = tk.BooleanVar()
+        self.dark_theme_var = tk.BooleanVar()
+        self.light_theme_var = tk.BooleanVar()
 
         self.upload_path_var.set(current_path)
         self.overwrite_download_var.set(1)
 
+        # load config
         if theme == "dark":
             self.dark_theme_var.set(1)
         else:
@@ -79,7 +81,7 @@ class Window(tk.Frame):
         self.upload_all_button = ttk.Button(self.frame2, text="Upload All", command=self.upload_all)
         self.overwrite_upload_cb = ttk.Checkbutton(self.frame2, text="Overwrite existing files on upload?",
                                                    variable=self.overwrite_upload_var,
-                                                   onvalue=1, offvalue=0)
+                                                   onvalue=True, offvalue=False)
 
         # download frame
         self.frame3 = ttk.LabelFrame(self.main, text="Download MER")
@@ -89,16 +91,16 @@ class Window(tk.Frame):
         self.download_button = ttk.Button(self.frame3, text="Download", command=self.download)
         self.overwrite_download_cb = ttk.Checkbutton(self.frame3, text="Overwrite file?",
                                                      variable=self.overwrite_download_var,
-                                                     onvalue=1, offvalue=0)
+                                                     onvalue=True, offvalue=False)
         self.replace_comms_cb = ttk.Checkbutton(self.frame3, text="Replace communications? (hint, you should)",
                                                 variable=self.replace_comms_var,
-                                                onvalue=1, offvalue=0)
+                                                onvalue=True, offvalue=False)
         self.delete_logs_cb = ttk.Checkbutton(self.frame3, text="Delete logs?",
                                               variable=self.delete_logs_var,
-                                              onvalue=1, offval=0)
+                                              onvalue=True, offval=False)
         self.run_on_start_cb = ttk.Checkbutton(self.frame3, text="Run at startup?",
                                                variable=self.run_on_start_var,
-                                               onvalue=1, offvalue=0)
+                                               onvalue=True, offvalue=False)
 
         self.init_window()
         self._find_panelview_ip()
