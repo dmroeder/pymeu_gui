@@ -24,6 +24,8 @@ class Window(tk.Frame):
         tk.Frame.__init__(self, main)
         self.main = main
 
+        self.product_codes = [17, 47, 48, 51, 94, 98, 102, 187, 189]
+
         self.log_file = "logjammin.log"
         logging.basicConfig(filename=self.log_file, filemode="w", format='%(asctime)s - %(message)s')
         self.log = logging.getLogger()
@@ -181,7 +183,7 @@ class Window(tk.Frame):
             ret = comm.Discover()
             if ret.Value:
                 for device in ret.Value:
-                    if device.DeviceID == 24:
+                    if device.DeviceID == 24 and device.ProductCode in self.product_codes:
                         hmis.append(device.IPAddress)
         if hmis:
             self.ip_list['values'] = hmis
