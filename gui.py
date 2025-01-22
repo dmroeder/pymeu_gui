@@ -124,6 +124,7 @@ class Window(tk.Frame):
 
         # Add file dropdown with exit
         f = tk.Menu(menu)
+        f.add_command(label="Get Terminal Info", command=self._get_terminal_info)
         f.add_command(label="Exit", command=self.close)
         menu.add_cascade(label="File", menu=f)
 
@@ -214,6 +215,13 @@ class Window(tk.Frame):
 
         with open('config.ini', 'w') as configfile:
             self.config.write(configfile)
+
+    def _get_terminal_info(self):
+        """ Log the terminal info
+        """
+        ip_address = self.ip_list.get()
+        meu = MEUtility(ip_address)
+        meu.get_terminal_info(print_log=True)
 
     def browse_upload_directory(self):
         """ Select new upload directory
