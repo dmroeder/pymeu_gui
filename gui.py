@@ -84,6 +84,7 @@ class Window(tk.Frame):
         self.frame2 = ttk.LabelFrame(self.main, text="Upload MER")
         self.upload_label = ttk.Label(self.frame2, text="Upload path:")
         self.upload_entry = ttk.Entry(self.frame2, textvariable=self.upload_path_var)
+        self.mer_list_label = ttk.Label(self.frame2, text="Files on terminal:")
         self.mer_list = tk.Listbox(self.frame2)
         self.upload_browse_button = ttk.Button(self.frame2, text="...", command=self.browse_upload_directory)
         self.upload_button = ttk.Button(self.frame2, text="Upload Selected", command=self.upload)
@@ -151,10 +152,11 @@ class Window(tk.Frame):
         self.upload_label.grid(row=0, column=0, padx=(0,5), pady=5, sticky=tk.E)
         self.upload_entry.grid(row=0, column=1, columnspan=2, padx=5, pady=5, sticky=tk.E+tk.W)
         self.upload_browse_button.grid(row=0, column=3, padx=5, pady=5)
-        self.mer_list.grid(row=1, column=0, columnspan=4, padx=5, pady=5, sticky=tk.W+tk.E)
-        self.overwrite_upload_cb.grid(row=2, column=0, columnspan=2, padx=5, pady=5, sticky=tk.W)
-        self.upload_button.grid(row=2, column=2, padx=5, pady=5)
-        self.upload_all_button.grid(row=2, column=3, padx=5, pady=5, sticky=tk.W)
+        self.mer_list_label.grid(row=1, column=0, columnspan=4, padx=5, pady=5, sticky=tk.W)
+        self.mer_list.grid(row=2, column=0, columnspan=4, padx=5, pady=5, sticky=tk.W+tk.E)
+        self.overwrite_upload_cb.grid(row=3, column=0, columnspan=2, padx=5, pady=5, sticky=tk.W)
+        self.upload_button.grid(row=3, column=2, padx=5, pady=5)
+        self.upload_all_button.grid(row=3, column=3, padx=5, pady=5, sticky=tk.W)
 
         # download frame
         self.frame3.pack(padx=5, pady=10, fill=tk.X)
@@ -362,7 +364,7 @@ class Window(tk.Frame):
 
 if __name__ == "__main__":
     root = tk.Tk()
-    root.geometry("620x600")
+    root.geometry("620x630")
     root.title("A Better Transfer Utility? Maybe?")
     root.resizable(False, False)
     app = Window(root)
