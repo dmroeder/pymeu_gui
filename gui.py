@@ -17,6 +17,8 @@ Add file dropdowns maybe?
 Add open upload directory
 """
 
+__version_info__ = (2025, 1, 27)
+__version__ = '.'.join(str(x) for x in __version_info__)
 
 class Window(tk.Frame):
 
@@ -32,6 +34,7 @@ class Window(tk.Frame):
         self.log.setLevel(logging.DEBUG)
 
         self.log.info("INIT - Starting pymeu_gui")
+        self.log.info("INIT - pymeu_gui version {}".format(__version__))
         self.log.info("INIT - pylogix version {}".format(pylogix.__version__))
 
         self.config = configparser.ConfigParser()
