@@ -6,6 +6,7 @@ import sys
 import tkinter as tk
 
 from mer_tools import mer
+from pathlib import Path
 from pymeu import MEUtility
 from tkinter import filedialog
 from tkinter import messagebox
@@ -64,8 +65,6 @@ class Window(tk.Frame):
         self.dark_theme_var = tk.BooleanVar()
         self.light_theme_var = tk.BooleanVar()
 
-        self.upload_path_var.set(current_path)
-
         # load config
         if theme == "dark":
             self.dark_theme_var.set(1)
@@ -76,6 +75,7 @@ class Window(tk.Frame):
         self.replace_comms_var.set(self.config.get('general', 'replace_comms'))
         self.delete_logs_var.set(self.config.get('general', 'delete_logs'))
         self.run_on_start_var.set(self.config.get('general', 'run_at_start'))
+        self.upload_path_var.set(self.config.get('general', 'upload_path'))
 
         # settings frame
         self.frame1 = ttk.LabelFrame(self.main, text="Settings")
@@ -210,13 +210,16 @@ class Window(tk.Frame):
     def _create_new_config(self):
         """ Create a new configuration file
         """
+        my_docs = os.path.join(os.getenv("USERPROFILE"), "Documents")
+        my_docs = my_docs.replace(os.sep, '/')
         self.log.info("GUI - No config file found, creating new one")
         self.config['general'] = {'theme':'dark',
                                   'delete_logs':'False',
                                   'run_at_start':'False',
                                   'replace_comms':'False',
                                   'overwrite_download':'False',
-                                  'overwrite_upload':'False'}
+                                  'overwrite_upload':'False',
+                                  'upload_path':my_docs}
 
         with open('config.ini', 'w') as configfile:
             self.config.write(configfile)
@@ -354,6 +357,7 @@ class Window(tk.Frame):
         self.config.set('general', 'replace_comms', str(self.replace_comms_var.get()))
         self.config.set('general', 'delete_logs', str(self.delete_logs_var.get()))
         self.config.set('general', 'run_at_start', str(self.run_on_start_var.get()))
+        self.config.set('general', 'upload_path', str(self.upload_path_var.get()))
 
         with open('config.ini', 'w') as configfile:
             self.config.write(configfile)
