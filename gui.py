@@ -149,6 +149,8 @@ class Window(tk.Frame):
         # Add file dropdown with exit
         f = tk.Menu(menu)
         f.add_command(label="Get Terminal Info", command=self._get_terminal_info)
+        f.add_command(label="Save defaults", command=self.save_config)
+        f.add_separator()
         f.add_command(label="Exit", command=self.close)
         menu.add_cascade(label="File", menu=f)
 
@@ -158,7 +160,7 @@ class Window(tk.Frame):
                           variable=self.dark_theme_var, command=self.set_dark_theme)
         f.add_checkbutton(label="Light theme", onvalue=1, offvalue=0,
                           variable=self.light_theme_var, command=self.set_light_theme)
-        f.add_command(label="Save defaults", command=self.save_config)
+
         menu.add_cascade(label="Edit", menu=f)
 
         # settings frame
