@@ -79,6 +79,7 @@ class Window(tk.Frame):
             self.run_on_start_var.set(self.config.get('general', 'run_at_start'))
             self.upload_path_var.set(self.config.get('general', 'upload_path'))
             self.discover_var.set(self.config.get('general', 'discover_on_init'))
+            window_width = self.config.get('general', 'window_width')
         except:
             self.log.info("INIT - config file is corrupt, creating a new one")
             self._create_new_config()
@@ -129,6 +130,14 @@ class Window(tk.Frame):
         if self.discover_var.get():
             self._find_panelview_ip()
             self._get_runtime_files()
+
+        self.main.update_idletasks()
+        window_height = self.main.winfo_height()
+        try:
+            geometry = "{}x{}".format(window_width, window_height)
+            self.main.geometry(geometry)
+        except:
+            self.log.info("GUI - Failed to set window geometry")
 
     def init_window(self):
         """ Place all GUI items
@@ -232,7 +241,8 @@ class Window(tk.Frame):
                                   'overwrite_download':'False',
                                   'overwrite_upload':'False',
                                   'upload_path':my_docs,
-                                  'discover_on_init':'True'}
+                                  'discover_on_init':'True',
+                                  'window_width':'500'}
 
         with open('config.ini', 'w') as configfile:
             self.config.write(configfile)
@@ -372,6 +382,7 @@ class Window(tk.Frame):
         self.config.set('general', 'run_at_start', str(self.run_on_start_var.get()))
         self.config.set('general', 'upload_path', str(self.upload_path_var.get()))
         self.config.set('general', 'discover_on_init', str(self.discover_var.get()))
+        self.config.set('general', 'window_width', str(self.main.winfo_width()))
 
         with open('config.ini', 'w') as configfile:
             self.config.write(configfile)
