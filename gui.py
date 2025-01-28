@@ -2,6 +2,7 @@ import configparser
 import logging
 import os
 import pylogix
+import subprocess
 import sys
 import tkinter as tk
 
@@ -149,6 +150,7 @@ class Window(tk.Frame):
         # Add file dropdown with exit
         f = tk.Menu(menu)
         f.add_command(label="Get Terminal Info", command=self._get_terminal_info)
+        f.add_command(label="Open log file", command=self.open_log)
         f.add_command(label="Save defaults", command=self.save_config)
         f.add_separator()
         f.add_command(label="Exit", command=self.close)
@@ -375,6 +377,11 @@ class Window(tk.Frame):
         self.tk.call("set_theme", "light")
         self.dark_theme_var.set(0)
         self.light_theme_var.set(1)
+
+    def open_log(self):
+        """ Open the log file in a text editor
+        """
+        subprocess.Popen(["notepad", self.log_file])
 
     def save_config(self):
         """ Save the current settings to the config file
