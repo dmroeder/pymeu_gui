@@ -254,7 +254,14 @@ class Window(tk.Frame):
         """
         ip_address = self.ip_list.get()
         meu = MEUtility(ip_address)
-        meu.get_terminal_info(print_log=True)
+        try:
+            response = meu.get_terminal_info()
+            for item in response.device.log:
+                self.log.info("GUI - Terminal Info: {}".format(item))
+            messagebox.showinfo("Complete", "See log file for terminal details")
+        except Exception as e:
+            self.log.info("GUI - Failed to get terminal info, {}".format(e))
+            messagebox.showerror("Failed", "Could not get terminal info, see log file")
 
     def browse_upload_directory(self):
         """ Select new upload directory
