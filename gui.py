@@ -371,8 +371,7 @@ class Window(tk.Frame):
 
 if __name__ == "__main__":
     root = tk.Tk()
-    root.geometry("620x630")
-    root.title("A Better Transfer Utility? Maybe?")
-    root.resizable(False, False)
+    root.title("A Better Transfer Utility? Maybe? v{}".format(__version__))
+    root.resizable(True, False)
     app = Window(root)
     root.mainloop()
