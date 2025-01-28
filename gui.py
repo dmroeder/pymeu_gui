@@ -64,24 +64,34 @@ class Window(tk.Frame):
         self.run_on_start_var = tk.BooleanVar()
         self.dark_theme_var = tk.BooleanVar()
         self.light_theme_var = tk.BooleanVar()
+        self.discover_var = tk.BooleanVar()
 
-        # load config
-        if theme == "dark":
-            self.dark_theme_var.set(1)
-        else:
-            self.light_theme_var.set(1)
-        self.overwrite_upload_var.set(self.config.get('general', 'overwrite_upload'))
-        self.overwrite_download_var.set(self.config.get('general', 'overwrite_download'))
-        self.replace_comms_var.set(self.config.get('general', 'replace_comms'))
-        self.delete_logs_var.set(self.config.get('general', 'delete_logs'))
-        self.run_on_start_var.set(self.config.get('general', 'run_at_start'))
-        self.upload_path_var.set(self.config.get('general', 'upload_path'))
+        try:
+            # load config
+            if theme == "dark":
+                self.dark_theme_var.set(1)
+            else:
+                self.light_theme_var.set(1)
+            self.overwrite_upload_var.set(self.config.get('general', 'overwrite_upload'))
+            self.overwrite_download_var.set(self.config.get('general', 'overwrite_download'))
+            self.replace_comms_var.set(self.config.get('general', 'replace_comms'))
+            self.delete_logs_var.set(self.config.get('general', 'delete_logs'))
+            self.run_on_start_var.set(self.config.get('general', 'run_at_start'))
+            self.upload_path_var.set(self.config.get('general', 'upload_path'))
+            self.discover_var.set(self.config.get('general', 'discover_on_init'))
+        except:
+            self.log.info("INIT - config file is corrupt, creating a new one")
+            self._create_new_config()
+            self.save_config()
 
         # settings frame
         self.frame1 = ttk.LabelFrame(self.main, text="Settings")
         self.ip_label = ttk.Label(self.frame1, text="HMI IP Address:")
         self.ip_list = ttk.Combobox(self.frame1)
         self.ip_list.bind("<<ComboboxSelected>>", self._get_runtime_files)
+        self.discover_on_init_cb = ttk.Checkbutton(self.frame1, text="Discover on init?",
+                                                   variable=self.discover_var,
+                                                   onvalue=True, offvalue=False)
 
         # upload frame
         self.frame2 = ttk.LabelFrame(self.main, text="Upload MER")
@@ -116,8 +126,9 @@ class Window(tk.Frame):
                                                onvalue=True, offvalue=False)
 
         self.init_window()
-        self._find_panelview_ip()
-        self._get_runtime_files()
+        if self.discover_var.get():
+            self._find_panelview_ip()
+            self._get_runtime_files()
 
     def init_window(self):
         """ Place all GUI items
@@ -147,6 +158,7 @@ class Window(tk.Frame):
         self.frame1.grid_columnconfigure(1, weight=1)
         self.ip_label.grid(row=0, column=0, padx=(0,5), pady=5, sticky=tk.W)
         self.ip_list.grid(row=0, column=1, padx=5, pady=5, sticky=tk.E+tk.W)
+        self.discover_on_init_cb.grid(row=1, column=0, columnspan=2, padx=5, pady=5, sticky=tk.W)
 
         # upload frame
         self.frame2.pack(padx=5, pady=10, fill=tk.X)
@@ -219,7 +231,8 @@ class Window(tk.Frame):
                                   'replace_comms':'False',
                                   'overwrite_download':'False',
                                   'overwrite_upload':'False',
-                                  'upload_path':my_docs}
+                                  'upload_path':my_docs,
+                                  'discover_on_init':'True'}
 
         with open('config.ini', 'w') as configfile:
             self.config.write(configfile)
@@ -358,6 +371,7 @@ class Window(tk.Frame):
         self.config.set('general', 'delete_logs', str(self.delete_logs_var.get()))
         self.config.set('general', 'run_at_start', str(self.run_on_start_var.get()))
         self.config.set('general', 'upload_path', str(self.upload_path_var.get()))
+        self.config.set('general', 'discover_on_init', str(self.discover_var.get()))
 
         with open('config.ini', 'w') as configfile:
             self.config.write(configfile)
