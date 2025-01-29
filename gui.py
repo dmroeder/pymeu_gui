@@ -318,6 +318,11 @@ class Window(tk.Frame):
         file_name = filedialog.askopenfilename(filetypes=filetypes)
         self.download_file_var.set(file_name)
 
+        m = mer(file_name)
+        file_version = m.get_version()[1:]
+        file_version = int(file_version.split(".")[0])
+        self.log.info("GUI - MER selected for download is version {}".format(file_version))
+
     def download(self):
         """ Download MER file to PanelView
         """
