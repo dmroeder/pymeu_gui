@@ -13,11 +13,6 @@ from tkinter import filedialog
 from tkinter import messagebox
 from tkinter import ttk
 
-""" TODO:
-Add logging
-Add file dropdowns maybe?
-Add open upload directory
-"""
 
 __version_info__ = (0,2,0)
 __version__ = '.'.join(str(x) for x in __version_info__)
@@ -199,6 +194,9 @@ class Window(tk.Frame):
         self.run_on_start_cb.grid(row=3, column=1, columnspan=2, padx=5, pady=6, sticky=tk.W)
         self.download_button.grid(row=3, column=3, padx=5, pady=5)
 
+    def _bind_tips(self):
+        pass
+
     def _get_file(self, file_name):
         if hasattr(sys, "_MEIPASS"):
             return os.path.join(sys._MEIPASS, file_name)
@@ -260,6 +258,8 @@ class Window(tk.Frame):
             response = meu.get_terminal_info()
             for item in response.device.log:
                 self.log.info("GUI - Terminal Info: {}".format(item))
+            self.log.info("GUI - Terminal firmware: {}".format(response.device.me_version))
+            self.log.info("GUI - Helper version: {}".format(response.device.helper_version))
             messagebox.showinfo("Complete", "See log file for terminal details")
         except Exception as e:
             self.log.info("GUI - Failed to get terminal info, {}".format(e))
