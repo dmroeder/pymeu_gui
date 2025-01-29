@@ -227,8 +227,21 @@ class Window(tk.Frame):
         if ip_address:
             meu = MEUtility(ip_address)
             stuff = meu.get_terminal_info()
+            try:
+                temp = stuff.device.log[-1]
+                temp = temp.split("\\")[-1][:-1]
+                if temp.endswith(".mer"):
+                    running_file = temp
+                else:
+                    running_file = None
+            except:
+                running_file = None
+
             for f in stuff.device.files:
-                self.mer_list.insert('end', f)
+                if f == running_file:
+                    self.mer_list.insert('end', ">{}".format(f))
+                else:
+                    self.mer_list.insert('end', f)
 
     def _create_new_config(self):
         """ Create a new configuration file
@@ -282,6 +295,8 @@ class Window(tk.Frame):
         if indexes:
             selected = indexes[0]
             item = self.mer_list.get(selected)
+            if item.startswith(">"):
+                item = item[1:]
             try:
                 ip_address = self.ip_list.get()
                 upload_path = self.upload_path_var.get() + "/" + item
