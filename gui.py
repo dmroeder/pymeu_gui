@@ -14,8 +14,9 @@ from tkinter import messagebox
 from tkinter import ttk
 
 
-__version_info__ = (0,2,0)
+__version_info__ = (0,4,0)
 __version__ = '.'.join(str(x) for x in __version_info__)
+
 
 class Window(tk.Frame):
 
@@ -193,9 +194,6 @@ class Window(tk.Frame):
         self.delete_logs_cb.grid(row=3, column=0, padx=5, pady=5, sticky=tk.W)
         self.run_on_start_cb.grid(row=3, column=1, columnspan=2, padx=5, pady=6, sticky=tk.W)
         self.download_button.grid(row=3, column=3, padx=5, pady=5)
-
-    def _bind_tips(self):
-        pass
 
     def _get_file(self, file_name):
         if hasattr(sys, "_MEIPASS"):
