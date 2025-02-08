@@ -98,6 +98,7 @@ class Window(tk.Frame):
         self.mer_list_label = ttk.Label(self.frame2, text="Files on terminal:")
         self.mer_list = tk.Listbox(self.frame2)
         self.upload_browse_button = ttk.Button(self.frame2, text="...", command=self.browse_upload_directory)
+        self.upload_refresh_button = ttk.Button(self.frame2, text="Refresh", command=self._get_runtime_files)
         self.upload_button = ttk.Button(self.frame2, text="Upload Selected", command=self.upload)
         self.upload_all_button = ttk.Button(self.frame2, text="Upload All", command=self.upload_all)
         self.overwrite_upload_cb = ttk.Checkbutton(self.frame2, text="Overwrite existing files on upload?",
@@ -178,7 +179,8 @@ class Window(tk.Frame):
         self.upload_browse_button.grid(row=0, column=3, padx=5, pady=5)
         self.mer_list_label.grid(row=1, column=0, columnspan=4, padx=5, pady=5, sticky=tk.W)
         self.mer_list.grid(row=2, column=0, columnspan=4, padx=5, pady=5, sticky=tk.W+tk.E)
-        self.overwrite_upload_cb.grid(row=3, column=0, columnspan=2, padx=5, pady=5, sticky=tk.W)
+        self.overwrite_upload_cb.grid(row=3, column=0, columnspan=1, padx=5, pady=5, sticky=tk.W)
+        self.upload_refresh_button.grid(row=3, column=1, padx=5, pady=5)
         self.upload_button.grid(row=3, column=2, padx=5, pady=5)
         self.upload_all_button.grid(row=3, column=3, padx=5, pady=5, sticky=tk.W)
 
