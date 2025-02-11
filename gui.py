@@ -225,9 +225,9 @@ class Window(tk.Frame):
         self.mer_list.delete(0, tk.END)
         ip_address = self.ip_list.get()
         if ip_address:
-            meu = MEUtility(ip_address)
-            stuff = meu.get_terminal_info()
             try:
+                meu = MEUtility(ip_address)
+                stuff = meu.get_terminal_info()
                 temp = stuff.device.log[-1]
                 temp = temp.split("\\")[-1][:-1]
                 if temp.endswith(".mer"):
@@ -236,6 +236,8 @@ class Window(tk.Frame):
                     running_file = None
             except:
                 running_file = None
+                self.log.info("GUI - Failed to fetch MER names")
+                return
 
             for f in stuff.device.files:
                 if f == running_file:
