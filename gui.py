@@ -275,6 +275,8 @@ class Window(tk.Frame):
                 self.log.info("GUI - Terminal Info: {}".format(item))
             self.log.info("GUI - Terminal firmware: {}".format(response.device.me_version))
             self.log.info("GUI - Helper version: {}".format(response.device.helper_version))
+            self.log.info("GUI - Product Code:{}".format(response.device.product_code))
+            self.log.info("GUI - {}".format(response.device.product_name))
             messagebox.showinfo("Complete", "See log file for terminal details")
         except Exception as e:
             self.log.info("GUI - Failed to get terminal info, {}".format(e))
