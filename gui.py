@@ -2,6 +2,7 @@ import configparser
 import logging
 import os
 import pylogix
+import pymeu
 import subprocess
 import sys
 import tkinter as tk
@@ -34,6 +35,7 @@ class Window(tk.Frame):
         self.log.info("INIT - Starting pymeu_gui")
         self.log.info("INIT - pymeu_gui version {}".format(__version__))
         self.log.info("INIT - pylogix version {}".format(pylogix.__version__))
+        self.log.info("INIT - pymeu version {}".format(pymeu.__version__))
 
         self.config = configparser.ConfigParser()
         if not os.path.exists('config.ini'):
