@@ -268,7 +268,7 @@ class Window(tk.Frame):
         """ Log the terminal info
         """
         ip_address = self.ip_list.get()
-        meu = MEUtility(ip_address)
+        meu = MEUtility(ip_address, ignore_terminal_valid=True)
         try:
             response = meu.get_terminal_info()
             for item in response.device.log:
