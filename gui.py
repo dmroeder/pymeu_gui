@@ -228,8 +228,7 @@ class Window(tk.Frame):
             try:
                 meu = MEUtility(ip_address)
                 stuff = meu.get_terminal_info()
-                temp = stuff.device.log[-1]
-                temp = temp.split("\\")[-1][:-1]
+                temp = stuff.device.startup_mer_file
                 if temp.endswith(".mer"):
                     running_file = temp
                 else:
