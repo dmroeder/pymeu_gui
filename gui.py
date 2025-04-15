@@ -5,6 +5,7 @@ import pylogix
 import pymeu
 import subprocess
 import sys
+import threading
 import tkinter as tk
 
 from mer_tools import mer
@@ -92,6 +93,8 @@ class Window(tk.Frame):
         self.discover_on_init_cb = ttk.Checkbutton(self.frame1, text="Discover on init?",
                                                    variable=self.discover_var,
                                                    onvalue=True, offvalue=False)
+        self.canvas = tk.Canvas(self.frame1, width=10, height=10)
+        self.connected = self.canvas.create_oval(0, 0, 10, 10, fill="red")
 
         # upload frame
         self.frame2 = ttk.LabelFrame(self.main, text="Upload MER")
@@ -126,10 +129,13 @@ class Window(tk.Frame):
                                                variable=self.run_on_start_var,
                                                onvalue=True, offvalue=False)
 
+        self.stop_thread = threading.Event()
+
         self.init_window()
         if self.discover_var.get():
             self._find_panelview_ip()
             self._get_runtime_files()
+            self.check_panelview_connection()
 
         self.main.update_idletasks()
         window_height = self.main.winfo_height()
@@ -171,6 +177,7 @@ class Window(tk.Frame):
         self.ip_label.grid(row=0, column=0, padx=(0,5), pady=5, sticky=tk.W)
         self.ip_list.grid(row=0, column=1, padx=5, pady=5, sticky=tk.E+tk.W)
         self.discover_on_init_cb.grid(row=1, column=0, columnspan=2, padx=5, pady=5, sticky=tk.W)
+        self.canvas.grid(row=0, column=3)
 
         # upload frame
         self.frame2.pack(padx=5, pady=10, fill=tk.X)
@@ -282,6 +289,23 @@ class Window(tk.Frame):
         except Exception as e:
             self.log.info("GUI - Failed to get terminal info, {}".format(e))
             messagebox.showerror("Failed", "Could not get terminal info, see log file")
+
+    def check_panelview_connection(self):
+        try:
+            ip_address = self.ip_list.get()
+            if ip_address:
+                with pylogix.PLC(ip_address) as comm:
+                    ret = comm.GetDeviceProperties()
+                    if ret.Status == "Success" and ret.Value.DeviceID == 24:
+                        self.canvas.itemconfig(self.connected, fill="green")
+                    else:
+                        self.canvas.itemconfig(self.connected, fill="red")
+            else:
+                self.canvas.itemconfig(self.connected, fill="red")
+            if not self.stop_thread.is_set():
+                threading.Timer(2, self.check_panelview_connection).start()
+        except:
+            self.log.error("GUI - Something went wrong checking the PLC connection")
 
     def browse_upload_directory(self):
         """ Select new upload directory
@@ -431,6 +455,7 @@ class Window(tk.Frame):
     def close(self):
         """ Exit app
         """
+        self.stop_thread.set()
         self.log.info("GUI - User exit requested")
         sys.exit()
 
