@@ -291,6 +291,9 @@ class Window(tk.Frame):
             messagebox.showerror("Failed", "Could not get terminal info, see log file")
 
     def check_panelview_connection(self):
+        """ Check the connection to the PanelView periodically,
+        indicate on the UI whether it is connected or not
+        """
         try:
             ip_address = self.ip_list.get()
             if ip_address:
