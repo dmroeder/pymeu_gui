@@ -126,6 +126,12 @@ class Window(tk.Frame):
                                                variable=self.run_on_start_var,
                                                onvalue=True, offvalue=False)
 
+        # progress bar
+        self.frame4 = ttk.LabelFrame(self.main, text = "Transfer Progress")
+        self.progress_bar = ttk.Progressbar(self.frame4,
+                                            orient='horizontal',
+                                            mode='determinate')
+
         self.init_window()
         if self.discover_var.get():
             self._find_panelview_ip()
@@ -198,6 +204,12 @@ class Window(tk.Frame):
         self.delete_logs_cb.grid(row=3, column=0, padx=5, pady=5, sticky=tk.W)
         self.run_on_start_cb.grid(row=3, column=1, columnspan=2, padx=5, pady=6, sticky=tk.W)
         self.download_button.grid(row=3, column=3, padx=5, pady=5)
+
+        # progress bar
+        self.frame4.pack(padx=5, pady=10, fill=tk.X)
+        self.frame4.grid_columnconfigure(0, weight=0)
+        self.frame4.grid_columnconfigure(1, weight=1)
+        self.progress_bar.pack(fill=tk.X, padx=5, pady=10)
 
     def _get_file(self, file_name):
         if hasattr(sys, "_MEIPASS"):
@@ -290,6 +302,11 @@ class Window(tk.Frame):
         if folder_path:
             self.upload_path_var.set(folder_path)
 
+    def progress_callback(self, description: str, total_bytes: int, current_bytes: int):
+        progress = 100* current_bytes / total_bytes
+        self.progress_bar["value"] = progress
+        root.update_idletasks()
+
     def upload(self):
         """ Upload all applications from the terminal
         """
@@ -307,7 +324,7 @@ class Window(tk.Frame):
                 upload_path = self.upload_path_var.get() + "/" + item
                 overwrite = self.overwrite_upload_var.get()
                 meu = MEUtility(ip_address)
-                stuff = meu.upload(upload_path, overwrite=overwrite)
+                stuff = meu.upload(upload_path, self.progress_callback, overwrite=overwrite)
                 messagebox.showinfo("Information", "Uploading {} complete".format(item))
             except Exception as e:
                 messagebox.showerror("Error", "Failed to upload {}".format(e))
@@ -326,7 +343,7 @@ class Window(tk.Frame):
         overwrite = self.overwrite_upload_var.get()
         try:
             meu = MEUtility(ip_address)
-            stuff = meu.upload_all(upload_path, overwrite=overwrite)
+            stuff = meu.upload_all(upload_path, self.progress_callback, overwrite=overwrite)
             messagebox.showinfo("Information", "Upload complete")
         except Exception as e:
             messagebox.showerror("Error", "Something went wrong, {}".format(e))
@@ -379,7 +396,9 @@ class Window(tk.Frame):
                 messagebox.showwarning("Abort!", "Your MER file version ({}) is newer than the terminal firmware ({})".format(
                     file_version, terminal_info.device.version_major))
                 return
-            stuff = meu.download(mer_path, overwrite=overwrite,
+            stuff = meu.download(mer_path,
+                                 self.progress_callback, 
+                                 overwrite=overwrite,
                                  delete_logx=delete_logs,
                                  replace_comms=replace_comms,
                                  run_at_starupt=run_at_start)
