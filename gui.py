@@ -366,9 +366,11 @@ class Window(tk.Frame):
         indicate on the UI whether it is connected or not
         """
         try:
-            ip_address = self.ip_list.get()
+            ip_address, route = self.convert_route()
             if ip_address:
                 with pylogix.PLC(ip_address) as comm:
+                    if route:
+                        comm.Route = route
                     ret = comm.GetDeviceProperties()
                     if ret.Status == "Success" and ret.Value.DeviceID == 24:
                         self.canvas.itemconfig(self.connected, fill="green")
@@ -380,6 +382,30 @@ class Window(tk.Frame):
                 threading.Timer(2, self.check_panelview_connection).start()
         except:
             self.log.error("GUI - Something went wrong checking the PLC connection")
+            self.canvas.itemconfig(self.connected, fill="red")
+            self.stop_thread.set()
+
+    def convert_route(self):
+        """ Convert the entered address to an IP and route.  If
+        no route was appended, route will be None
+        """
+        route_path = self.ip_list.get()
+        path_array = route_path.split(",")
+
+        if len(path_array) == 1:
+            return path_array[0], None
+        else:
+            ip = path_array.pop(0)
+            new_parts = []
+            for item in path_array:
+                try:
+                    new_parts.append(int(item))
+                except:
+                    new_parts.append(item)
+
+            chunks = [new_parts[i:i + 2] for i in range(0, len(new_parts), 2)]
+            return ip, chunks
+
 
     def browse_upload_directory(self):
         """ Select new upload directory
