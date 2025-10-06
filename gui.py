@@ -145,6 +145,7 @@ class Window(tk.Frame):
             self.upload_path_var.set(self.config.get('general', 'upload_path'))
             self.discover_var.set(self.config.get('general', 'discover_on_init'))
             window_width = self.config.get('general', 'window_width')
+            self.download_file_var.set(self.config.get('general', 'last_download'))
         except:
             self.log.info("INIT - config file is corrupt, creating a new one")
             self._create_new_config()
@@ -344,7 +345,8 @@ class Window(tk.Frame):
                                   'overwrite_upload':'False',
                                   'upload_path':my_docs,
                                   'discover_on_init':'True',
-                                  'window_width':'500'}
+                                  'window_width':'500',
+                                  'last_download':'C:\\Users\\Public\\Public Documents\\RSView Enterprise\\ME\\Runtime'}
 
         with open('config.ini', 'w') as configfile:
             self.config.write(configfile)
@@ -561,6 +563,10 @@ class Window(tk.Frame):
                                  replace_comms=replace_comms,
                                  run_at_starupt=run_at_start)
             messagebox.showinfo("Success", "Download complete!")
+            # update config
+            self.config.set('general', 'last_download', mer_path)
+            with open('config.ini', 'w') as configfile:
+                self.config.write(configfile)
         except Exception as e:
             messagebox.showerror("Error", "Failed to download MER, {}".format(e))
         
