@@ -105,18 +105,8 @@ class Window(tk.Frame):
         self.log.info("INIT - pylogix version {}".format(pylogix.__version__))
         self.log.info("INIT - pymeu version {}".format(pymeu.__version__))
 
-        self.config = configparser.ConfigParser()
-        if not os.path.exists('config.ini'):
-            self._create_new_config()
-        self.config.read('config.ini')
-
         current_path = os.path.dirname(__file__)
         current_path = current_path.replace(os.sep, '/')
-
-        theme = self.config.get("general", "theme")
-        tcl_file = self._get_file("resources/azure.tcl")
-        self.tk.call("source", tcl_file)
-        self.tk.call("set_theme", theme)
 
         # variables
         self.mer_file_var = tk.StringVar()
@@ -133,6 +123,16 @@ class Window(tk.Frame):
         self.light_theme_var = tk.BooleanVar()
         self.discover_var = tk.BooleanVar()
 
+        self.config = configparser.ConfigParser()
+        if not os.path.exists('config.ini'):
+            self._create_new_config()
+        self.config.read('config.ini')
+
+        theme = self.config.get("general", "theme")
+        tcl_file = self._get_file("resources/azure.tcl")
+        self.tk.call("source", tcl_file)
+        self.tk.call("set_theme", theme)
+
         try:
             # load config
             if theme == "dark":
@@ -147,13 +147,11 @@ class Window(tk.Frame):
             self.upload_path_var.set(self.config.get('general', 'upload_path'))
             self.discover_var.set(self.config.get('general', 'discover_on_init'))
             self.window_width = self.config.get('general', 'window_width')
-            self.download_file_var.set(self.config.get('general', 'last_download_dir'))
-            # self.last_me.set(self.config.get('general', 'last_download_mer'))
             # set the default download path
             dir = self.config.get('general', 'last_download_dir')
             mer = self.config.get('general', 'last_download_mer')
             file_path = "{}\\{}".format(dir, mer)
-            self.mer_file_var.set(file_path)
+            self.download_file_var.set(file_path)
         except:
             self.log.info("INIT - config file is corrupt, creating a new one")
             self._create_new_config()
