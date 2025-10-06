@@ -97,6 +97,8 @@ class Window(tk.Frame):
         self.log.setLevel(logging.DEBUG)
 
         self.queue = queue.Queue()
+        self.last_mer = ""
+        self.window_width = "500"
 
         self.log.info("INIT - Starting pymeu_gui")
         self.log.info("INIT - pymeu_gui version {}".format(__version__))
@@ -144,8 +146,14 @@ class Window(tk.Frame):
             self.run_on_start_var.set(self.config.get('general', 'run_at_start'))
             self.upload_path_var.set(self.config.get('general', 'upload_path'))
             self.discover_var.set(self.config.get('general', 'discover_on_init'))
-            window_width = self.config.get('general', 'window_width')
-            self.download_file_var.set(self.config.get('general', 'last_download'))
+            self.window_width = self.config.get('general', 'window_width')
+            self.download_file_var.set(self.config.get('general', 'last_download_dir'))
+            # self.last_me.set(self.config.get('general', 'last_download_mer'))
+            # set the default download path
+            dir = self.config.get('general', 'last_download_dir')
+            mer = self.config.get('general', 'last_download_mer')
+            file_path = "{}\\{}".format(dir, mer)
+            self.mer_file_var.set(file_path)
         except:
             self.log.info("INIT - config file is corrupt, creating a new one")
             self._create_new_config()
@@ -212,7 +220,7 @@ class Window(tk.Frame):
         self.main.update_idletasks()
         window_height = self.main.winfo_height()
         try:
-            geometry = "{}x{}".format(window_width, window_height)
+            geometry = "{}x{}".format(self.window_width, window_height)
             self.main.geometry(geometry)
         except:
             self.log.info("GUI - Failed to set window geometry")
@@ -346,10 +354,17 @@ class Window(tk.Frame):
                                   'upload_path':my_docs,
                                   'discover_on_init':'True',
                                   'window_width':'500',
-                                  'last_download':'C:\\Users\\Public\\Public Documents\\RSView Enterprise\\ME\\Runtime'}
+                                  'last_download_dir':'C:\\Users\\Public\\Public Documents\\RSView Enterprise\\ME\\Runtime',
+                                  'last_download_mer':""}
 
         with open('config.ini', 'w') as configfile:
             self.config.write(configfile)
+
+        # set the default download path
+        dir = self.config.get('general', 'last_download_dir')
+        mer = self.config.get('general', 'last_download_mer')
+        file_path = "{}\\{}".format(dir, mer)
+        self.download_file_var.set(file_path)
 
     def _get_terminal_info(self):
         """ Log the terminal info
@@ -509,7 +524,8 @@ class Window(tk.Frame):
         """ Open system file picker
         """
         filetypes = [('MER files', '*.mer')]
-        file_name = filedialog.askopenfilename(filetypes=filetypes)
+        init_dir = self.config.get('general', 'last_download_dir')
+        file_name = filedialog.askopenfilename(filetypes=filetypes, initialdir=init_dir)
         if file_name:
             self.download_file_var.set(file_name)
 
@@ -564,7 +580,8 @@ class Window(tk.Frame):
                                  run_at_starupt=run_at_start)
             messagebox.showinfo("Success", "Download complete!")
             # update config
-            self.config.set('general', 'last_download', mer_path)
+            self.config.set('general', 'last_download_dir', os.path.dirname(mer_path))
+            self.config.set('general', 'last_download_mer', os.path.basename(mer_path))
             with open('config.ini', 'w') as configfile:
                 self.config.write(configfile)
         except Exception as e:
@@ -596,11 +613,14 @@ class Window(tk.Frame):
     def save_config(self):
         """ Save the current settings to the config file
         """
+        if self.main.winfo_width() == 1:
+            w = self.window_width
+        else:
+            w = self.main.winfo_width()
         if self.dark_theme_var.get():
             self.config.set('general', 'theme', 'dark')
         else:
             self.config.set('general', 'theme', 'light')
-
         self.config.set('general', 'overwrite_upload', str(self.overwrite_upload_var.get()))
         self.config.set('general', 'overwrite_download', str(self.overwrite_download_var.get()))
         self.config.set('general', 'replace_comms', str(self.replace_comms_var.get()))
@@ -608,7 +628,7 @@ class Window(tk.Frame):
         self.config.set('general', 'run_at_start', str(self.run_on_start_var.get()))
         self.config.set('general', 'upload_path', str(self.upload_path_var.get()))
         self.config.set('general', 'discover_on_init', str(self.discover_var.get()))
-        self.config.set('general', 'window_width', str(self.main.winfo_width()))
+        self.config.set('general', 'window_width', str(w))
 
         with open('config.ini', 'w') as configfile:
             self.config.write(configfile)
