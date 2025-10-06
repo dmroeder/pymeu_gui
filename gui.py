@@ -482,6 +482,8 @@ class Window(tk.Frame):
         else:
             messagebox.showinfo("Information", "No MER was selected")
 
+        self.progress_bar["value"] = 0
+
     def upload_all(self):
         """ Upload all applications from the terminal
         """
@@ -498,6 +500,8 @@ class Window(tk.Frame):
             messagebox.showinfo("Information", "Upload complete")
         except Exception as e:
             messagebox.showerror("Error", "Something went wrong, {}".format(e))
+        
+        self.progress_bar["value"] = 0
 
     def browse_download_file(self):
         """ Open system file picker
@@ -559,6 +563,8 @@ class Window(tk.Frame):
             messagebox.showinfo("Success", "Download complete!")
         except Exception as e:
             messagebox.showerror("Error", "Failed to download MER, {}".format(e))
+        
+        self.progress_bar["value"] = 0
 
     def set_dark_theme(self):
         """ Switch the current theme to dark,
