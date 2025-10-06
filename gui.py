@@ -1,4 +1,5 @@
 import configparser
+import ipaddress
 import logging
 import os
 import pylogix
@@ -6,7 +7,9 @@ import pymeu
 import subprocess
 import sys
 import threading
+import time
 import tkinter as tk
+import queue
 
 from mer_tools import mer
 from pathlib import Path
@@ -92,6 +95,8 @@ class Window(tk.Frame):
         logging.basicConfig(filename=self.log_file, filemode="w", format='%(asctime)s - %(message)s')
         self.log = logging.getLogger()
         self.log.setLevel(logging.DEBUG)
+
+        self.queue = queue.Queue()
 
         self.log.info("INIT - Starting pymeu_gui")
         self.log.info("INIT - pymeu_gui version {}".format(__version__))
@@ -200,7 +205,8 @@ class Window(tk.Frame):
         if self.discover_var.get():
             self._find_panelview_ip()
             self._get_runtime_files()
-            self.check_panelview_connection()
+            self.check_queue()
+            self.connection_thread()
 
         self.main.update_idletasks()
         window_height = self.main.winfo_height()
@@ -361,51 +367,84 @@ class Window(tk.Frame):
             self.log.info("GUI - Failed to get terminal info, {}".format(e))
             messagebox.showerror("Failed", "Could not get terminal info, see log file")
 
-    def check_panelview_connection(self):
-        """ Check the connection to the PanelView periodically,
-        indicate on the UI whether it is connected or not
+    def connection_thread(self):
+        """ Thread to get the IP from the UI
+        """
+        def worker():
+            while True:
+                path_copy = self.ip_list.get()
+                time.sleep(4)
+                self.queue.put(path_copy)
+        threading.Thread(target=worker, daemon=True).start()
+
+    def check_queue(self):
+        """ Receive data from the PanelView check thread
         """
         try:
-            ip_address, route = self.convert_route()
-            if ip_address:
-                with pylogix.PLC(ip_address) as comm:
-                    if route:
-                        comm.Route = route
+            while True:
+                value = self.queue.get_nowait()
+                self.check_panelview_connection(value)
+        except queue.Empty:
+            pass
+        self.after(100, self.check_queue)
+
+    def check_panelview_connection(self, value):
+        """ Check to see if a PanelView is found at the user entered path
+        """
+        ip_address, route = self.convert_route(value)
+        if ip_address:
+            with pylogix.PLC(ip_address) as comm:
+                comm.SocketTimeout = 1
+                if route:
+                    comm.Route = route
+                try:
                     ret = comm.GetDeviceProperties()
                     if ret.Status == "Success" and ret.Value.DeviceID == 24:
                         self.canvas.itemconfig(self.connected, fill="green")
                     else:
                         self.canvas.itemconfig(self.connected, fill="red")
-            else:
-                self.canvas.itemconfig(self.connected, fill="red")
-            if not self.stop_thread.is_set():
-                threading.Timer(2, self.check_panelview_connection).start()
-        except:
-            self.log.error("GUI - Something went wrong checking the PLC connection")
+                except:
+                    self.canvas.itemconfig(self.connected, fill="red")
+        else:
             self.canvas.itemconfig(self.connected, fill="red")
-            self.stop_thread.set()
 
-    def convert_route(self):
-        """ Convert the entered address to an IP and route.  If
-        no route was appended, route will be None
+    def convert_route(self, value):
+        """ Convert the user entered network path to an
+        IP address and route that pylogix will understand
         """
-        route_path = self.ip_list.get()
+        route_path = value
         path_array = route_path.split(",")
 
-        if len(path_array) == 1:
-            return path_array[0], None
+        # validate IP address
+        try:
+            ipaddress.ip_address(path_array[0])
+            ip_address = path_array[0]
+        except:
+            ip_address = None
+        path_array.pop(0)
+
+        # validate route is 2 segments
+        if path_array:
+            if len(path_array) > 0 and len(path_array) % 2 == 0:
+                route = path_array
+            else:
+                route = None
         else:
-            ip = path_array.pop(0)
-            new_parts = []
-            for item in path_array:
+            route = None
+
+        # convert route integer segments
+        if route:
+            updated_route = []
+            for segment in route:
                 try:
-                    new_parts.append(int(item))
+                    updated_route.append(int(segment))
                 except:
-                    new_parts.append(item)
+                    updated_route.append(segment)
+            updated_route = [updated_route[i:i + 2] for i in range(0, len(updated_route), 2)]
+        else:
+            updated_route = route
 
-            chunks = [new_parts[i:i + 2] for i in range(0, len(new_parts), 2)]
-            return ip, chunks
-
+        return ip_address, updated_route
 
     def browse_upload_directory(self):
         """ Select new upload directory
