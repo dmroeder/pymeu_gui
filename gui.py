@@ -19,7 +19,7 @@ from tkinter import messagebox
 from tkinter import ttk
 
 
-__version_info__ = (0,7,0)
+__version_info__ = (0,8,0)
 __version__ = '.'.join(str(x) for x in __version_info__)
 
 
