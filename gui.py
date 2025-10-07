@@ -19,7 +19,7 @@ from tkinter import messagebox
 from tkinter import ttk
 
 
-__version_info__ = (0,8,0)
+__version_info__ = (0,8,1)
 __version__ = '.'.join(str(x) for x in __version_info__)
 
 
@@ -150,7 +150,7 @@ class Window(tk.Frame):
             # set the default download path
             dir = self.config.get('general', 'last_download_dir')
             mer = self.config.get('general', 'last_download_mer')
-            file_path = "{}\\{}".format(dir, mer)
+            file_path = "{}/{}".format(dir, mer)
             self.download_file_var.set(file_path)
         except:
             self.log.info("INIT - config file is corrupt, creating a new one")
