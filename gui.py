@@ -248,6 +248,11 @@ class Window(tk.Frame):
 
         menu.add_cascade(label="Edit", menu=f)
 
+        # add Actions drop down
+        f = tk.Menu(menu)
+        f.add_command(label="Reboot PanelView", command=self.reboot)
+        menu.add_cascade(label="Actions", menu=f)
+
         # settings frame
         self.frame1.pack(padx=5, pady=10, fill=tk.X)
         self.frame1.grid_columnconfigure(0, weight=0)
@@ -630,6 +635,19 @@ class Window(tk.Frame):
 
         with open('config.ini', 'w') as configfile:
             self.config.write(configfile)
+
+    def reboot(self):
+        """ Reboot panelview
+        """
+        self.log.info("GUI - User requested PanelView reboot")
+        result = messagebox.askyesno("Reboot", "Are you sure you want to reboot?")
+        if result:
+            self.log.info("GUI - User acknowedged reboot request")
+            ip_address = self.ip_list.get()
+            meu = MEUtility(ip_address)
+            ret = meu.reboot()
+        else:
+            self.log.info("GUI - User canceled reboot request")
 
     def close(self):
         """ Exit app
