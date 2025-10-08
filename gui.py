@@ -473,7 +473,7 @@ class Window(tk.Frame):
         if folder_path:
             self.upload_path_var.set(folder_path)
 
-    def progress_callback(self, description: str, total_bytes: int, current_bytes: int):
+    def progress_callback(self, description: str, stuff: str, total_bytes: int, current_bytes: int):
         progress = 100* current_bytes / total_bytes
         self.progress_bar["value"] = progress
         root.update_idletasks()
