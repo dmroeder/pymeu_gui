@@ -232,7 +232,6 @@ class Window(tk.Frame):
 
         # Add file dropdown with exit
         f = tk.Menu(menu)
-        f.add_command(label="Get Terminal Info", command=self._get_terminal_info)
         f.add_command(label="Open log file", command=self.open_log)
         f.add_command(label="Save defaults", command=self.save_config)
         f.add_separator()
@@ -250,6 +249,7 @@ class Window(tk.Frame):
 
         # add Actions drop down
         f = tk.Menu(menu)
+        f.add_command(label="Get Terminal Info", command=self._get_terminal_info)
         f.add_command(label="Reboot PanelView", command=self.reboot)
         menu.add_cascade(label="Actions", menu=f)
 
@@ -495,7 +495,7 @@ class Window(tk.Frame):
                 upload_path = self.upload_path_var.get() + "/" + item
                 overwrite = self.overwrite_upload_var.get()
                 meu = MEUtility(ip_address)
-                stuff = meu.upload(upload_path, self.progress_callback, overwrite=overwrite)
+                stuff = meu.upload(upload_path, progress=self.progress_callback, overwrite=overwrite)
                 messagebox.showinfo("Information", "Uploading {} complete".format(item))
             except Exception as e:
                 messagebox.showerror("Error", "Failed to upload {}".format(e))
@@ -516,7 +516,7 @@ class Window(tk.Frame):
         overwrite = self.overwrite_upload_var.get()
         try:
             meu = MEUtility(ip_address)
-            stuff = meu.upload_all(upload_path, self.progress_callback, overwrite=overwrite)
+            stuff = meu.upload_all(upload_path, progress=self.progress_callback, overwrite=overwrite)
             messagebox.showinfo("Information", "Upload complete")
         except Exception as e:
             messagebox.showerror("Error", "Something went wrong, {}".format(e))
@@ -562,7 +562,7 @@ class Window(tk.Frame):
             file_version = int(file_version.split(".")[0])
             meu = MEUtility(ip_address)
             terminal_info = meu.get_terminal_info()
-            terminal_version = terminal_info.device.me_version
+            terminal_version = terminal_info.device.me_identity.me_version
             terminal_version = int(terminal_version.split(".")[0])
 
             self.log.info("GUI - file_version {}, terminal_version {}".format(file_version, terminal_version))
@@ -576,11 +576,11 @@ class Window(tk.Frame):
                     file_version, terminal_info.device.version_major))
                 return
             stuff = meu.download(mer_path,
-                                 self.progress_callback, 
+                                 progress=self.progress_callback,
                                  overwrite=overwrite,
-                                 delete_logx=delete_logs,
+                                 delete_logs=delete_logs,
                                  replace_comms=replace_comms,
-                                 run_at_starupt=run_at_start)
+                                 run_at_startup=run_at_start)
             messagebox.showinfo("Success", "Download complete!")
             # update config
             self.config.set('general', 'last_download_dir', os.path.dirname(mer_path))
