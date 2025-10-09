@@ -12,6 +12,7 @@ GUI front end for the Python ME Transfer Utility
 * Supports backplane path routing
 * Verifies MER version is the same or older than terminal firmware
 * Alerts if MER is protected
+* Delete MER from PanelView
 
 ## Acknowledgements
 * **aawilliams85** for the excellent pymeu utility [aawilliams85](https://github.com/aawilliams85)
