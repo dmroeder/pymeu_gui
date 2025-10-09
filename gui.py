@@ -251,6 +251,7 @@ class Window(tk.Frame):
         f = tk.Menu(menu)
         f.add_command(label="Get Terminal Info", command=self._get_terminal_info)
         f.add_command(label="Reboot PanelView", command=self.reboot)
+        f.add_command(label="Delete MER", command=self.delete_mer)
         menu.add_cascade(label="Actions", menu=f)
 
         # settings frame
@@ -648,6 +649,32 @@ class Window(tk.Frame):
             ret = meu.reboot()
         else:
             self.log.info("GUI - User canceled reboot request")
+
+    def delete_mer(self):
+        """ Delete the selected MER from the terminal
+        """
+        ip_address = self.ip_list.get()
+        ip_address, route = self.convert_route(ip_address)
+        indexes = self.mer_list.curselection()
+        if indexes:
+            selected = indexes[0]
+            mer = self.mer_list.get(selected)
+            if mer.startswith(">"):
+                self.log.info("GUI - User tried deleting the running application")
+                messagebox.showerror("Error", "You cannot delete the running application")
+                return
+
+            data = f"\\Windows\\RemoteHelper.DLL\0DeleteRemFile\0\\Application Data\\Rockwell Software\\RSViewME\\Runtime\\{mer}"
+            with pylogix.PLC(ip_address) as comm:
+                if route:
+                    comm.Route = route
+                ret = comm.Message(0x50, 0x04fd, 0x00, data=data)
+                self.log.info(f"GUI - User deleted {mer} from the terminal")
+                messagebox.showinfo("Success", f"{mer} was deleted from the terminal")
+                self._get_runtime_files()
+        else:
+            self.log.info("GUI - User tried to delete a MER without selecting one first")
+            messagebox.showinfo("Oops", "No runtime was selected")
 
     def close(self):
         """ Exit app
