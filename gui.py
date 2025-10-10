@@ -29,68 +29,6 @@ class Window(tk.Frame):
         tk.Frame.__init__(self, main)
         self.main = main
 
-        self.product_codes = [
-            13,   #PanelView Plus 700 CE
-            14,   #PanelView Plus 700
-            15,   #PanelView Plus 400
-            16,   #PanelView Plus 600
-            17,   #PanelView Plus 1000
-            18,   #PanelView Plus 1250
-            19,   #PanelView Plus 1500
-            20,   #PanelView Plus 1000 CE
-            21,   #PanelView Plus 1250 CE
-            22,   #PanelView Plus 1500 CE
-            40,   #PanelView Plus Compact 400
-            42,   #PanelView Plus Compact 600
-            44,   #PanelView Plus Compact 1000
-            45,   #PanelView Plus 6 700
-            46,   #PanelView Plus 6 700 CE
-            47,   #PanelView Plus 6 1000
-            48,   #PanelView Plus 6 1000 CE
-            49,   #PanelView Plus 6 1250
-            50,   #PanelView Plus 6 1250 CE
-            51,   #PanelView Plus 6 1500
-            52,   #PanelView Plus 6 1500 CE
-            74,   #PanelView Plus 6 400
-            75,   #PanelView Plus 6 400
-            77,   #PanelView Plus 6 600
-            78,   #PanelView Plus 6 600 Extended
-            79,   #PanelView Plus 6 600 Extended
-            81,   #PanelView Plus 7 Standard 600
-            83,   #PanelView Plus 7 Standard 700
-            85,   #PanelView Plus 7 Standard 900W
-            87,   #PanelView Plus 7 Standard 1000
-            89,   #PanelView Plus 7 Standard 1200W
-            91,   #PanelView Plus 7 Standard 1500
-            94,   #PanelView Plus 7 Performance 700
-            96,   #PanelView Plus 7 Performance 900W
-            98,   #PanelView Plus 7 Performance 1000
-            100,  #PanelView Plus 7 Performance 1200W
-            102,  #PanelView Plus 7 Performance 1500
-            104,  #PanelView Plus 7 Performance 1900
-            110,  #PanelView Plus 7 Performance 700W
-            112,  #PanelView Plus 7 Performance 1000W
-            114,  #PanelView Plus 7 Performance 1200W
-            116,  #PanelView Plus 7 Performance 1500W
-            118,  #PanelView Plus 7 Performance 1900W
-            147,  #PanelView Plus 6 Compact 1000
-            175,  #PanelView Plus 6 Compact 400
-            177,  #PanelView Plus 6 Compact 600
-            179,  #PanelView Plus 7 Standard 400W
-            180,  #PanelView Plus 7 Standard 400W DLR
-            181,  #PanelView Plus 7 Standard 600
-            182,  #PanelView Plus 7 Standard 600 DLR
-            183,  #PanelView Plus 7 Standard 700
-            184,  #PanelView Plus 7 Standard 700 DLR
-            185,  #PanelView Plus 7 Standard 900W
-            186,  #PanelView Plus 7 Standard 900W DLR
-            187,  #PanelView Plus 7 Standard 1000
-            188,  #PanelView Plus 7 Standard 1000 DLR
-            189,  #PanelView Plus 7 Standard 1200W
-            190,  #PanelView Plus 7 Standard 1200W DLR
-            191,  #PanelView Plus 7 Standard 1500
-            192]  #PanelView Plus 7 Standard 1500 DLR
-
         self.log_file = "logjammin.log"
         logging.basicConfig(filename=self.log_file, filemode="w", format='%(asctime)s - %(message)s')
         self.log = logging.getLogger()
@@ -313,7 +251,7 @@ class Window(tk.Frame):
             ret = comm.Discover()
             if ret.Value:
                 for device in ret.Value:
-                    if device.DeviceID == 24 and device.ProductCode in self.product_codes:
+                    if device.DeviceID == 24 and device.ProductCode in pymeu.me.validation.PRODUCT_CODES:
                         hmis.append(device.IPAddress)
         if hmis:
             self.ip_list['values'] = hmis
