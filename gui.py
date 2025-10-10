@@ -661,6 +661,10 @@ class Window(tk.Frame):
         if indexes:
             selected = indexes[0]
             mer = self.mer_list.get(selected)
+            result = messagebox.askyesno("Delete", f"Are you sure you want to delete {mer}")
+            if not result:
+                self.log.info(f"GUI - User chose not to delete {mer}")
+                return
             if mer.startswith(">"):
                 self.log.info("GUI - User tried deleting the running application")
                 messagebox.showerror("Error", "You cannot delete the running application")
