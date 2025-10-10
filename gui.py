@@ -250,6 +250,8 @@ class Window(tk.Frame):
         # add Actions drop down
         f = tk.Menu(menu)
         f.add_command(label="Get Terminal Info", command=self._get_terminal_info)
+        f.add_command(label="Find PanelViews", command=self._find_panelview_ip)
+        f.add_separator()
         f.add_command(label="Reboot PanelView", command=self.reboot)
         f.add_command(label="Delete MER", command=self.delete_mer)
         menu.add_cascade(label="Actions", menu=f)
