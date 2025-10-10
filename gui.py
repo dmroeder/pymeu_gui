@@ -658,6 +658,10 @@ class Window(tk.Frame):
         ip_address = self.ip_list.get()
         ip_address, route = self.convert_route(ip_address)
         indexes = self.mer_list.curselection()
+        meu = MEUtility(ip_address)
+        terminal_info = meu.get_terminal_info()
+        terminal_version = terminal_info.device.me_identity.me_version
+        terminal_version = int(terminal_version.split(".")[0])
         if indexes:
             selected = indexes[0]
             mer = self.mer_list.get(selected)
@@ -669,8 +673,10 @@ class Window(tk.Frame):
                 self.log.info("GUI - User tried deleting the running application")
                 messagebox.showerror("Error", "You cannot delete the running application")
                 return
-
-            data = f"\\Windows\\RemoteHelper.DLL\0DeleteRemFile\0\\Application Data\\Rockwell Software\\RSViewME\\Runtime\\{mer}"
+            if terminal_version > 5:
+                data = f"\\Windows\\RemoteHelper.DLL\0DeleteRemFile\0\\Application Data\\Rockwell Software\\RSViewME\\Runtime\\{mer}"
+            else:
+                data = f"\\Storage Card\\Rockwell Software\\RSViewME\\RemoteHelper.DLL\0DeleteRemFile\0\\Storage Card\\Rockwell Software\\RSViewME\\Runtime\\{mer}"
             with pylogix.PLC(ip_address) as comm:
                 if route:
                     comm.Route = route
