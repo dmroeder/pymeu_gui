@@ -327,10 +327,10 @@ class Window(tk.Frame):
             response = meu.get_terminal_info()
             for item in response.device.log:
                 self.log.info("GUI - Terminal Info: {}".format(item))
-            self.log.info("GUI - Terminal firmware: {}".format(response.device.me_version))
-            self.log.info("GUI - Helper version: {}".format(response.device.helper_version))
-            self.log.info("GUI - Product Code:{}".format(response.device.product_code))
-            self.log.info("GUI - {}".format(response.device.product_name))
+            self.log.info("GUI - Terminal firmware: {}".format(response.device.me_identity.me_version))
+            self.log.info("GUI - Helper version: {}".format(response.device.me_identity.helper_version))
+            self.log.info("GUI - Product Code:{}".format(response.device.me_identity.product_code))
+            self.log.info("GUI - {}".format(response.device.me_identity.product_name))
             messagebox.showinfo("Complete", "See log file for terminal details")
         except Exception as e:
             self.log.info("GUI - Failed to get terminal info, {}".format(e))
@@ -673,9 +673,9 @@ class Window(tk.Frame):
         """ Delete the selected MER from the terminal
         """
         ip_address = self.ip_list.get()
-        ip_address, route = self.convert_route(ip_address)
+        _, route = self.convert_route(ip_address)
         indexes = self.mer_list.curselection()
-        meu = MEUtility(ip_address)
+        meu = MEUtility(ip_address, ignore_terminal_valid=True)
         terminal_info = meu.get_terminal_info()
         terminal_version = terminal_info.device.me_identity.me_version
         terminal_version = int(terminal_version.split(".")[0])
