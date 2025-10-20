@@ -28,6 +28,7 @@ class Window(tk.Frame):
     def __init__(self, main=None):
         tk.Frame.__init__(self, main)
         self.main = main
+        self.main.bind("<Configure>", self.on_resize)
 
         self.log_file = "logjammin.log"
         logging.basicConfig(filename=self.log_file, filemode="w", format='%(asctime)s - %(message)s')
@@ -50,6 +51,7 @@ class Window(tk.Frame):
         self.mer_file_var = tk.StringVar()
         self.ip_address_var = tk.StringVar()
         self.upload_path_var = tk.StringVar()
+        self.upload_path_var.trace_add("write", self.on_text_change)
         self.download_file_var = tk.StringVar()
 
         self.overwrite_upload_var = tk.BooleanVar()
@@ -102,7 +104,8 @@ class Window(tk.Frame):
         self.ip_list.bind("<<ComboboxSelected>>", self._get_runtime_files)
         self.discover_on_init_cb = ttk.Checkbutton(self.frame1, text="Discover on init?",
                                                    variable=self.discover_var,
-                                                   onvalue=True, offvalue=False)
+                                                   onvalue=True, offvalue=False,
+                                                   command=self.on_settings_change)
         self.canvas = tk.Canvas(self.frame1, width=10, height=10)
         self.connected = self.canvas.create_oval(0, 0, 10, 10, fill="red")
 
@@ -118,7 +121,8 @@ class Window(tk.Frame):
         self.upload_all_button = ttk.Button(self.frame2, text="Upload All", command=self.upload_all)
         self.overwrite_upload_cb = ttk.Checkbutton(self.frame2, text="Overwrite existing files on upload?",
                                                    variable=self.overwrite_upload_var,
-                                                   onvalue=True, offvalue=False)
+                                                   onvalue=True, offvalue=False,
+                                                   command=self.on_settings_change)
 
         # download frame
         self.frame3 = ttk.LabelFrame(self.main, text="Download MER")
@@ -128,16 +132,20 @@ class Window(tk.Frame):
         self.download_button = ttk.Button(self.frame3, text="Download", command=self.download)
         self.overwrite_download_cb = ttk.Checkbutton(self.frame3, text="Overwrite file?",
                                                      variable=self.overwrite_download_var,
-                                                     onvalue=True, offvalue=False)
+                                                     onvalue=True, offvalue=False,
+                                                     command=self.on_settings_change)
         self.replace_comms_cb = ttk.Checkbutton(self.frame3, text="Replace communications? (hint, you should)",
                                                 variable=self.replace_comms_var,
-                                                onvalue=True, offvalue=False)
+                                                onvalue=True, offvalue=False,
+                                                command=self.on_settings_change)
         self.delete_logs_cb = ttk.Checkbutton(self.frame3, text="Delete logs?",
                                               variable=self.delete_logs_var,
-                                              onvalue=True, offval=False)
+                                              onvalue=True, offval=False,
+                                              command=self.on_settings_change)
         self.run_on_start_cb = ttk.Checkbutton(self.frame3, text="Run at startup?",
                                                variable=self.run_on_start_var,
-                                               onvalue=True, offvalue=False)
+                                               onvalue=True, offvalue=False,
+                                               command=self.on_settings_change)
 
         self.stop_thread = threading.Event()
         # progress bar
@@ -540,6 +548,7 @@ class Window(tk.Frame):
         self.tk.call("set_theme", "dark")
         self.dark_theme_var.set(1)
         self.light_theme_var.set(0)
+        self.on_settings_change()
 
     def set_light_theme(self):
         """ Switch the current theme to light,
@@ -548,6 +557,7 @@ class Window(tk.Frame):
         self.tk.call("set_theme", "light")
         self.dark_theme_var.set(0)
         self.light_theme_var.set(1)
+        self.on_settings_change()
 
     def open_log(self):
         """ Open the log file in a text editor
@@ -576,6 +586,75 @@ class Window(tk.Frame):
 
         with open('config.ini', 'w') as configfile:
             self.config.write(configfile)
+
+        self.on_settings_change()
+
+    def on_settings_change(self, even=None):
+        """ Indicate that a setting has changed by adding an asterisk to the title
+        """
+        self.config.read('config.ini')
+
+        # compare checkbuttons with config
+        if str(self.discover_var.get()) != self.config.get('general', 'discover_on_init'):
+            self.main.title("A Better Transfer Utility? Maybe? v{}*".format(__version__))
+            return
+
+        if str(self.overwrite_upload_var.get()) != self.config.get('general', 'overwrite_upload'):
+            self.main.title("A Better Transfer Utility? Maybe? v{}*".format(__version__))
+            return
+
+        if str(self.overwrite_download_var.get()) != self.config.get('general', 'overwrite_download'):
+            self.main.title("A Better Transfer Utility? Maybe? v{}*".format(__version__))
+            return
+
+        if str(self.replace_comms_var.get()) != self.config.get('general', 'replace_comms'):
+            self.main.title("A Better Transfer Utility? Maybe? v{}*".format(__version__))
+            return
+
+        if str(self.delete_logs_var.get()) != self.config.get('general', 'delete_logs'):
+            self.main.title("A Better Transfer Utility? Maybe? v{}*".format(__version__))
+            return
+
+        if str(self.run_on_start_var.get()) != self.config.get('general', 'run_at_start'):
+            self.main.title("A Better Transfer Utility? Maybe? v{}*".format(__version__))
+            return
+
+        current_theme = self.config.get('general', 'theme')
+        if self.dark_theme_var.get() and current_theme != "dark":
+            self.main.title("A Better Transfer Utility? Maybe? v{}*".format(__version__))
+            return
+
+        if self.light_theme_var.get() and current_theme != "light":
+            self.main.title("A Better Transfer Utility? Maybe? v{}*".format(__version__))
+            return
+
+        # check window width
+        if str(self.main.winfo_width()) != self.config.get('general', 'window_width'):
+            self.main.title("A Better Transfer Utility? Maybe? v{}*".format(__version__))
+            return
+
+        # check text entries
+        if self.upload_path_var.get() != self.config.get('general', 'upload_path'):
+            self.main.title("A Better Transfer Utility? Maybe? v{}*".format(__version__))
+            return
+
+        self.main.title("A Better Transfer Utility? Maybe? v{}".format(__version__))
+
+    def on_resize(self, event):
+        """ Window resize event
+        """
+        if hasattr(self.main, "resize_after_id"):
+            self.main.after_cancel(self.main.resize_after_id)
+
+        self.main.resize_after_id = self.main.after(500, self.on_settings_change)
+
+    def on_text_change(self, *args):
+        """ Text entry value changed
+        """
+        if hasattr(self.main, "typing_after_id"):
+            self.main.after_cancel(self.main.typing_after_id)
+
+        self.main.typing_after_id = self.main.after(500, self.on_settings_change)
 
     def reboot(self):
         """ Reboot panelview
