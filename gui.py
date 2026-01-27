@@ -127,6 +127,7 @@ class Window(tk.Frame):
         # download frame
         self.frame3 = ttk.LabelFrame(self.main, text="Download MER")
         self.download_label = ttk.Label(self.frame3, text="File to Download:")
+        self.mer_version_label = ttk.Label(self.frame3, text="Selected MER Version:")
         self.download_entry = ttk.Entry(self.frame3, textvariable=self.download_file_var)
         self.download_browse_button = ttk.Button(self.frame3, text="...", command=self.browse_download_file)
         self.download_button = ttk.Button(self.frame3, text="Download", command=self.download)
@@ -232,11 +233,12 @@ class Window(tk.Frame):
         self.download_label.grid(row=0, column=0, padx=(0,5), pady=5, sticky=tk.W)
         self.download_entry.grid(row=0, column=1, columnspan=2, padx=5, pady=5, sticky=tk.W+tk.E)
         self.download_browse_button.grid(row=0, column=3, padx=5, pady=5)
-        self.overwrite_download_cb.grid(row=1, column=0, columnspan=2, padx=5, pady=5, sticky=tk.W)
-        self.replace_comms_cb.grid(row=2, column=0, columnspan=2, padx=5, pady=5, sticky=tk.W)
-        self.delete_logs_cb.grid(row=3, column=0, padx=5, pady=5, sticky=tk.W)
-        self.run_on_start_cb.grid(row=3, column=1, columnspan=2, padx=5, pady=6, sticky=tk.W)
-        self.download_button.grid(row=3, column=3, padx=5, pady=5)
+        self.mer_version_label.grid(row=1, column=0, columnspan=2, padx=5, pady=5, sticky=tk.W+tk.E)
+        self.overwrite_download_cb.grid(row=2, column=0, columnspan=2, padx=5, pady=5, sticky=tk.W)
+        self.replace_comms_cb.grid(row=3, column=0, columnspan=2, padx=5, pady=5, sticky=tk.W)
+        self.delete_logs_cb.grid(row=4, column=0, padx=5, pady=5, sticky=tk.W)
+        self.run_on_start_cb.grid(row=4, column=1, columnspan=2, padx=5, pady=6, sticky=tk.W)
+        self.download_button.grid(row=4, column=3, padx=5, pady=5)
 
         # progress bar
         self.frame4.pack(padx=5, pady=10, fill=tk.X)
@@ -483,6 +485,7 @@ class Window(tk.Frame):
 
             m = mer(file_name)
             file_version = m.get_version()[1:]
+            self.mer_version_label['text'] = f"Selected MER Version: v{file_version}"
             file_version = int(file_version.split(".")[0])
             self.log.info("GUI - MER selected for download is version {}".format(file_version))
         else:
