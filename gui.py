@@ -308,7 +308,7 @@ class Window(tk.Frame):
                                   'upload_path':my_docs,
                                   'discover_on_init':'True',
                                   'window_width':'500',
-                                  'last_download_dir':'C:\\Users\\Public\\Public Documents\\RSView Enterprise\\ME\\Runtime',
+                                  'last_download_dir':'C:/Users/Public/Public Documents/RSView Enterprise/ME/Runtime',
                                   'last_download_mer':""}
 
         with open('config.ini', 'w') as configfile:
