@@ -248,6 +248,12 @@ class Window(tk.Frame):
         self.frame4.grid_columnconfigure(1, weight=1)
         self.progress_bar.pack(fill=tk.X, padx=5, pady=10)
 
+        mer_path = self.download_file_var.get()
+        if mer_path.endswith(".mer"):
+            m = mer(mer_path)
+            file_version = m.get_version()[1:]
+            self.mer_version_label['text'] = f"Selected MER Version: v{file_version}"
+
     def _get_file(self, file_name):
         if hasattr(sys, "_MEIPASS"):
             return os.path.join(sys._MEIPASS, file_name)
