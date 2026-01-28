@@ -102,6 +102,7 @@ class Window(tk.Frame):
         self.ip_label = ttk.Label(self.frame1, text="HMI IP Address:")
         self.ip_list = ttk.Combobox(self.frame1)
         self.ip_list.bind("<<ComboboxSelected>>", self._get_runtime_files)
+        self.pv_version_label = ttk.Label(self.frame1, text="Terminal Version:")
         self.discover_on_init_cb = ttk.Checkbutton(self.frame1, text="Discover on init?",
                                                    variable=self.discover_var,
                                                    onvalue=True, offvalue=False,
@@ -209,7 +210,8 @@ class Window(tk.Frame):
         self.frame1.grid_columnconfigure(1, weight=1)
         self.ip_label.grid(row=0, column=0, padx=(0,5), pady=5, sticky=tk.W)
         self.ip_list.grid(row=0, column=1, padx=5, pady=5, sticky=tk.E+tk.W)
-        self.discover_on_init_cb.grid(row=1, column=0, columnspan=2, padx=5, pady=5, sticky=tk.W)
+        self.pv_version_label.grid(row=1, column=0, columnspan=2, padx=5, pady=5, sticky=tk.W)
+        self.discover_on_init_cb.grid(row=2, column=0, columnspan=2, padx=5, pady=5, sticky=tk.W)
         self.canvas.grid(row=0, column=3)
 
         # upload frame
@@ -277,6 +279,7 @@ class Window(tk.Frame):
             try:
                 meu = MEUtility(ip_address)
                 stuff = meu.get_terminal_info()
+                self.pv_version_label['text'] = f"Terminal Version: {stuff.device.me_identity.me_version}"
                 temp = stuff.device.startup_mer_file
                 if temp.endswith(".mer"):
                     running_file = temp
@@ -327,6 +330,7 @@ class Window(tk.Frame):
         meu = MEUtility(ip_address, ignore_terminal_valid=True)
         try:
             response = meu.get_terminal_info()
+            self.pv_version_label['text'] = f"Terminal Version: {response.device.me_identity.me_version}"
             for item in response.device.log:
                 self.log.info("GUI - Terminal Info: {}".format(item))
             self.log.info("GUI - Terminal firmware: {}".format(response.device.me_identity.me_version))
@@ -335,6 +339,7 @@ class Window(tk.Frame):
             self.log.info("GUI - {}".format(response.device.me_identity.product_name))
             messagebox.showinfo("Complete", "See log file for terminal details")
         except Exception as e:
+            self.pv_version_label['text'] = "Terminal Version:"
             self.log.info("GUI - Failed to get terminal info, {}".format(e))
             messagebox.showerror("Failed", "Could not get terminal info, see log file")
 
