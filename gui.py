@@ -283,7 +283,7 @@ class Window(tk.Frame):
         ip_address = self.ip_list.get()
         if ip_address:
             try:
-                meu = MEUtility(ip_address)
+                meu = MEUtility(ip_address, ignore_terminal_valid=True)
                 stuff = meu.get_terminal_info()
                 self.pv_version_label['text'] = f"Terminal Version: {stuff.device.me_identity.me_version}"
                 temp = stuff.device.startup_mer_file
@@ -456,7 +456,7 @@ class Window(tk.Frame):
                 ip_address = self.ip_list.get()
                 upload_path = self.upload_path_var.get() + "/" + item
                 overwrite = self.overwrite_upload_var.get()
-                meu = MEUtility(ip_address)
+                meu = MEUtility(ip_address, ignore_terminal_valid=True)
                 stuff = meu.upload(upload_path, progress=self.progress_callback, overwrite=overwrite)
                 messagebox.showinfo("Information", "Uploading {} complete".format(item))
             except Exception as e:
@@ -477,7 +477,7 @@ class Window(tk.Frame):
         upload_path = self.upload_path_var.get()
         overwrite = self.overwrite_upload_var.get()
         try:
-            meu = MEUtility(ip_address)
+            meu = MEUtility(ip_address, ignore_terminal_valid=True)
             stuff = meu.upload_all(upload_path, progress=self.progress_callback, overwrite=overwrite)
             messagebox.showinfo("Information", "Upload complete")
         except Exception as e:
@@ -523,7 +523,7 @@ class Window(tk.Frame):
             m = mer(mer_path)
             file_version = m.get_version()[1:]
             file_version = int(file_version.split(".")[0])
-            meu = MEUtility(ip_address)
+            meu = MEUtility(ip_address, ignore_terminal_valid=True)
             terminal_info = meu.get_terminal_info()
             terminal_version = terminal_info.device.me_identity.me_version
             terminal_version = int(terminal_version.split(".")[0])
@@ -678,7 +678,7 @@ class Window(tk.Frame):
         if result:
             self.log.info("GUI - User acknowedged reboot request")
             ip_address = self.ip_list.get()
-            meu = MEUtility(ip_address)
+            meu = MEUtility(ip_address, ignore_terminal_valid=True)
             ret = meu.reboot()
         else:
             self.log.info("GUI - User canceled reboot request")
