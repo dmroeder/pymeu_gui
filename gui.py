@@ -249,7 +249,7 @@ class Window(tk.Frame):
         self.progress_bar.pack(fill=tk.X, padx=5, pady=10)
 
         mer_path = self.download_file_var.get()
-        if mer_path.endswith(".mer"):
+        if mer_path.endswith(".mer") and os.path.isfile(mer_path):
             m = mer(mer_path)
             file_version = m.get_version()[1:]
             self.mer_version_label['text'] = f"Selected MER Version: v{file_version}"
