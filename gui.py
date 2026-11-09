@@ -282,6 +282,7 @@ class Window(tk.Frame):
         self.mer_list.delete(0, tk.END)
         ip_address = self.ip_list.get()
         if ip_address:
+            self.log.info(f"GUI - Getting current runtime file from {ip_address}")
             try:
                 meu = MEUtility(ip_address, ignore_terminal_valid=True)
                 stuff = meu.get_terminal_info()
@@ -293,8 +294,8 @@ class Window(tk.Frame):
                     running_file = None
             except:
                 running_file = None
-                self.log.info("GUI - Failed to fetch MER names")
-                return
+                self.log.info("GUI - Failed to fetch startup file")
+                # return
 
             for f in stuff.device.files:
                 if f == running_file:
@@ -334,6 +335,7 @@ class Window(tk.Frame):
         """
         ip_address = self.ip_list.get()
         meu = MEUtility(ip_address, ignore_terminal_valid=True)
+        self.log.info(f"GUI - Getting terminal info from {ip_address}")
         try:
             response = meu.get_terminal_info()
             self.pv_version_label['text'] = f"Terminal Version: {response.device.me_identity.me_version}"
