@@ -101,6 +101,7 @@ class Window(tk.Frame):
         self.frame1 = ttk.LabelFrame(self.main, text="Settings")
         self.ip_label = ttk.Label(self.frame1, text="HMI IP Address:")
         self.ip_list = ttk.Combobox(self.frame1)
+        self.ip_list.bind("<Return>", self.on_ip_enter)
         self.ip_list.bind("<<ComboboxSelected>>", self._get_runtime_files)
         self.pv_version_label = ttk.Label(self.frame1, text="Terminal Version:")
         self.discover_on_init_cb = ttk.Checkbutton(self.frame1, text="Discover on init?",
@@ -350,6 +351,23 @@ class Window(tk.Frame):
             self.pv_version_label['text'] = "Terminal Version:"
             self.log.info("GUI - Failed to get terminal info, {}".format(e))
             messagebox.showerror("Failed", "Could not get terminal info, see log file")
+
+    def on_ip_enter(self, event):
+        """ Add IP address to our combobox when user presses enter key
+        """
+        ip = self.ip_list.get().strip()
+        # crude check for IP address
+        if ip.count('.') == 3:
+            if ip not in self.ip_list['values']:
+                self.log.info(f"GUI - Adding new {ip} address to list")
+                values = list(self.ip_list['values'])
+                values.append(ip)
+                self.ip_list['values'] = values
+                self.ip_list.set(ip)
+            else:
+                self.log.info(f"GUI - {ip} is already in the list")
+        else:
+            self.log.info(f"GUI - {ip} doesn't look like an IP address")
 
     def connection_thread(self):
         """ Thread to get the IP from the UI
