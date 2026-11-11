@@ -280,15 +280,16 @@ class Window(tk.Frame):
         """ Get the list of MER files that exist
         on the PanelView
         """
+        pv_stuff = None
         self.mer_list.delete(0, tk.END)
         ip_address = self.ip_list.get()
         if ip_address:
             self.log.info(f"GUI - Getting current runtime file from {ip_address}")
             try:
                 meu = MEUtility(ip_address, ignore_terminal_valid=True)
-                stuff = meu.get_terminal_info()
-                self.pv_version_label['text'] = f"Terminal Version: {stuff.device.me_identity.me_version}"
-                temp = stuff.device.startup_mer_file
+                pv_stuff = meu.get_terminal_info()
+                self.pv_version_label['text'] = f"Terminal Version: {pv_stuff.device.me_identity.me_version}"
+                temp = pv_stuff.device.startup_mer_file
                 if temp.endswith(".mer"):
                     running_file = temp
                 else:
@@ -296,13 +297,13 @@ class Window(tk.Frame):
             except:
                 running_file = None
                 self.log.info("GUI - Failed to fetch startup file")
-                # return
 
-            for f in stuff.device.files:
-                if f == running_file:
-                    self.mer_list.insert('end', ">{}".format(f))
-                else:
-                    self.mer_list.insert('end', f)
+            if pv_stuff:
+                for f in pv_stuff.device.files:
+                    if f == running_file:
+                        self.mer_list.insert('end', ">{}".format(f))
+                    else:
+                        self.mer_list.insert('end', f)
 
     def _create_new_config(self):
         """ Create a new configuration file
@@ -375,8 +376,9 @@ class Window(tk.Frame):
         def worker():
             while True:
                 path_copy = self.ip_list.get()
-                time.sleep(4)
-                self.queue.put(path_copy)
+                if path_copy in self.ip_list['values']:
+                    self.queue.put(path_copy)
+                    time.sleep(1)
         threading.Thread(target=worker, daemon=True).start()
 
     def check_queue(self):
