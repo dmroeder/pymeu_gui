@@ -18,6 +18,8 @@ from tkinter import filedialog
 from tkinter import messagebox
 from tkinter import ttk
 
+from resources import enhanced_listbox
+
 
 __version_info__ = (1,3,0)
 __version__ = '.'.join(str(x) for x in __version_info__)
@@ -116,7 +118,7 @@ class Window(tk.Frame):
         self.upload_label = ttk.Label(self.frame2, text="Upload path:")
         self.upload_entry = ttk.Entry(self.frame2, textvariable=self.upload_path_var)
         self.mer_list_label = ttk.Label(self.frame2, text="Files on terminal:")
-        self.mer_list = tk.Listbox(self.frame2)
+        self.mer_list = enhanced_listbox.EnhancedListbox(self.frame2)
         self.upload_browse_button = ttk.Button(self.frame2, text="...", command=self.browse_upload_directory)
         self.upload_refresh_button = ttk.Button(self.frame2, text="Refresh", command=self._get_runtime_files)
         self.upload_button = ttk.Button(self.frame2, text="Upload Selected", command=self.upload)
@@ -301,7 +303,8 @@ class Window(tk.Frame):
             if pv_stuff:
                 for f in pv_stuff.device.files:
                     if f == running_file:
-                        self.mer_list.insert('end', ">{}".format(f))
+                        # self.mer_list.insert('end', ">{}".format(f))
+                        self.mer_list.insert('end', f, fg='medium sea green')
                     else:
                         self.mer_list.insert('end', f)
 
