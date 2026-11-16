@@ -36,6 +36,32 @@ class EnhancedListbox(tk.Frame):
         self.selected = widget
         widget.configure(bg="#007fff")
 
+    def curselection(self):
+        if self.selected is None:
+            return ()
+
+        return (self.items.index(self.selected),)
+
+    def selection_clear(self, first, last=None):
+        if self.selected is None:
+            return
+
+        index = self.items.index(self.selected)
+
+        if last is None:
+            last = first
+
+        if last == tk.END:
+            last = len(self.items) - 1
+
+        if first <= index <= last:
+            self.selected.configure(bg=self.container.cget("bg"))
+            self.selected = None
+
+    def selection_set(self, first, last=None):
+        if last is None:
+            last = first
+
     def delete(self, first, last=None):
         if last is None:
             last = first
